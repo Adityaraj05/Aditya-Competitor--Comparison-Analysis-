@@ -1,0 +1,3877 @@
+{
+  "name": "Aditya Competitor-(Comparison Analysis)",
+  "nodes": [
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Helper function to extract only <title> from HTML\nconst extractTitle = (html) => {\n  const titleMatch = html.match(/<title>([^<]*)<\\/title>/i);\n  return titleMatch ? titleMatch[1].trim() : null;\n};\n\n// Get input HTML\nconst rawHtml = $json.data || '';\n\n// Extract only title\nconst title = extractTitle(rawHtml);\n\n// Return object with only title\nreturn {\n  title\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -14912,
+        -4176
+      ],
+      "id": "ff93615e-3d9e-40b2-99c3-ed4eb9ffbb5b",
+      "name": "extract title",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Helper function to extract only description from HTML\nconst extractDescription = (html) => {\n  const descriptionMatch = html.match(/<meta\\s+name=[\"']description[\"']\\s+content=[\"']([^\"']+)[\"']/i);\n  return descriptionMatch ? descriptionMatch[1].trim() : null;\n};\n\n// Get input HTML\nconst rawHtml = $json.data || '';\n\n// Extract only description\nconst description = extractDescription(rawHtml);\n\n// Return object with only description\nreturn {\n  description\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -14912,
+        -3984
+      ],
+      "id": "4196862e-5922-4eab-8caf-1e5d8a556c20",
+      "name": "Extract description",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Helper function to extract all h1 tags from HTML\nconst extractH1Tags = (html) => {\n  // Use 's' flag so dot matches newlines too!\n  const h1Matches = [...html.matchAll(/<h1[^>]*>(.*?)<\\/h1>/gis)];\n  return h1Matches.map(match => match[1].trim());\n};\n\n// Get input HTML\nconst rawHtml = $json.data || '';\n\n// Extract all h1 tags\nconst h1Tags = extractH1Tags(rawHtml);\n\n// Return object with all h1 tags\nreturn {\n  h1Tags\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -14816,
+        -3360
+      ],
+      "id": "c2e8fd65-602b-4111-8a9c-2bacd486ad9c",
+      "name": "Extract H1 tags",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Helper function to extract all h2-h7 tags from HTML\nconst extractHeadingTags = (html) => {\n  const headingMatches = [...html.matchAll(/<h([2-7])[^>]*>(.*?)<\\/h\\1>/gi)];\n  return headingMatches.map(match => ({\n    tag: `h${match[1]}`,\n    content: match[2].trim()\n  }));\n};\n\n// Get input HTML\nconst rawHtml = $json.data || '';\n\n// Extract all h2-h7 tags\nconst headingTags = extractHeadingTags(rawHtml);\n\n// Return object with all h2-h7 tags\nreturn {\n  headingTags\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -14928,
+        -3136
+      ],
+      "id": "a2b8c916-dd07-4259-8cdd-c06d998383c1",
+      "name": "Extract sub tags",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        -14384,
+        -3136
+      ],
+      "id": "f6763825-e052-4a98-b6b9-7c6e8d79af53",
+      "name": "Aggregate",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Helper function to extract all links from HTML\nconst extractAllLinks = (html) => {\n  // Match all anchor tags with href attributes\n  const linkMatches = [...html.matchAll(/<a\\s+[^>]*href=[\"']([^\"']+)[\"'][^>]*>(.*?)<\\/a>/gi)];\n\n  return linkMatches.map(match => ({\n    href: match[1],\n    text: match[2].trim()\n  }));\n};\n\n// Get input HTML\nconst rawHtml = $json.data || '';\n\n// Extract all links\nconst allLinks = extractAllLinks(rawHtml);\n\n// Return object with extracted links\nreturn {\n  allLinks\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -14208,
+        -3696
+      ],
+      "id": "e47aaebb-a9eb-4fb5-b889-7186896bc728",
+      "name": "extract links",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -13888,
+        -3472
+      ],
+      "id": "bc3c4523-a584-4214-bd8c-e5b62828e343",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "3a8Mp3wpFNiuZgUr",
+          "name": "OpenAi account for N8N site Preview"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// const removeHtmlTagsButKeepLinks = (htmlString) => {\n//     // Preserve links\n//     const linkRegex = /<a\\s+(?:[^>]*?\\s+)?href=([\"'])(.*?)\\1[^>]*>(.*?)<\\/a>/gi;\n//     let links = [];\n//     htmlString = htmlString.replace(linkRegex, (match, quote, url, text) => {\n//         links.push({ url, text });\n//         return `[[LINK-${links.length - 1}]]`; // Temporary placeholder\n//     });\n\n//     // Remove all HTML tags\n//     let textOnly = htmlString.replace(/<\\/?[^>]+(>|$)/g, '');\n\n//     // Restore links\n//     textOnly = textOnly.replace(/\\[\\[LINK-(\\d+)\\]\\]/g, (match, index) => {\n//         let link = links[parseInt(index, 10)];\n//         return `${link.text} (${link.url})`;\n//     });\n\n//     return textOnly;\n// };\n\n// // Example usage in n8n\n// const inputData = $json.data; // Assuming input data is in the \"data\" field\n\n// let cleanedData = inputData.map(item => removeHtmlTagsButKeepLinks(item));\n\n// return cleanedData.map(text => ({ json: { cleanedText: text } }));\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n// // Function to remove HTML tags but preserve links in the format \"text (URL)\"\n// const removeHtmlTagsButKeepLinks = (htmlString) => {\n//     // Check if htmlString is valid\n//     if (!htmlString || typeof htmlString !== 'string') {\n//         return ''; // If it's invalid, return an empty string\n//     }\n\n//     // Preserve links\n//     const linkRegex = /<a\\s+(?:[^>]*?\\s+)?href=([\"'])(.*?)\\1[^>]*>(.*?)<\\/a>/gi;\n//     let links = [];\n//     htmlString = htmlString.replace(linkRegex, (match, quote, url, text) => {\n//         links.push({ url, text });\n//         return `[[LINK-${links.length - 1}]]`; // Temporary placeholder\n//     });\n\n//     // Remove all HTML tags\n//     let textOnly = htmlString.replace(/<\\/?[^>]+(>|$)/g, '');\n\n//     // Restore links\n//     textOnly = textOnly.replace(/\\[\\[LINK-(\\d+)\\]\\]/g, (match, index) => {\n//         let link = links[parseInt(index, 10)];\n//         return `${link.text} (${link.url})`;\n//     });\n\n//     return textOnly;\n// };\n\n// // Get the input data\n// const inputData = $json.data; // Assuming input data is in the \"data\" field\n\n// // Ensure data is an array, even if it’s a single HTML string\n// const allRows = Array.isArray(inputData) ? inputData : [inputData];\n\n// // Process each HTML string and clean it, handling undefined or invalid HTML strings\n// let cleanedData = allRows.map(item => removeHtmlTagsButKeepLinks(item));\n\n// // Return a single object with the cleaned text\n// return { json: { cleanedText: cleanedData[0] || 'No valid HTML found' } };\n\n\n\n\n\n\n\n\n\n\n\n// this one is the final correct code \n// const removeHtmlTagsButKeepLinks = (htmlString) => {\n//     if (!htmlString || typeof htmlString !== \"string\") return \"\"; // Ensure valid input\n\n//     const linkRegex = /<a\\s+[^>]*?href=([\"'])(.*?)\\1[^>]*>(.*?)<\\/a>/gi;\n//     let links = [];\n    \n//     // Preserve links by replacing them with placeholders\n//     htmlString = htmlString.replace(linkRegex, (match, quote, url, text) => {\n//         links.push({ url, text });\n//         return `[[LINK-${links.length - 1}]]`; // Temporary placeholder\n//     });\n\n//     // Remove all HTML tags\n//     let textOnly = htmlString.replace(/<\\/?[^>]+(>|$)/g, '').trim();\n\n//     // Restore links in \"Text (URL)\" format\n//     textOnly = textOnly.replace(/\\[\\[LINK-(\\d+)\\]\\]/g, (match, index) => {\n//         let link = links[parseInt(index, 10)];\n//         return link ? `${link.text} (${link.url})` : \"\";\n//     });\n\n//     return textOnly;\n// };\n\n// // Processing n8n Input Data\n// let inputData = $json.data; // Assuming the data is under the \"data\" key\n\n// // Convert inputData to an array if it's not already one\n// if (!Array.isArray(inputData)) {\n//     inputData = [inputData];\n// }\n\n// // Ensure all elements are strings before processing\n// let cleanedData = inputData.map(item => removeHtmlTagsButKeepLinks(String(item || \"\")));\n\n// // Return a single object with the first cleaned item\n// return { json: { cleanedText: cleanedData[0] || \"No valid HTML content found\" } };\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nconst removeHtmlTagsButKeepLinks = (htmlString) => {\n    if (!htmlString || typeof htmlString !== \"string\") return \"\"; // Ensure valid input\n\n    const linkRegex = /<a\\s+[^>]*?href=([\"'])(.*?)\\1[^>]*>(.*?)<\\/a>/gi;\n    let links = [];\n    \n    // Preserve links by replacing them with placeholders\n    htmlString = htmlString.replace(linkRegex, (match, quote, url, text) => {\n        text = text.trim();\n        if (!text) text = url; // If no anchor text, use URL\n        links.push({ url, text });\n        return `[[LINK-${links.length - 1}]]`; // Temporary placeholder\n    });\n\n    // Remove inline scripts, styles, and all HTML tags\n    let textOnly = htmlString\n        .replace(/<script[^>]*>[\\s\\S]*?<\\/script>/gi, '')  // Remove scripts\n        .replace(/<style[^>]*>[\\s\\S]*?<\\/style>/gi, '')    // Remove styles\n        .replace(/<\\/?[^>]+(>|$)/g, '')                    // Remove remaining HTML tags\n        .replace(/\\s+/g, ' ')                              // Collapse multiple spaces\n        .trim();\n\n    // Restore links in \"Text (URL)\" format\n    textOnly = textOnly.replace(/\\[\\[LINK-(\\d+)\\]\\]/g, (match, index) => {\n        let link = links[parseInt(index, 10)];\n        return link ? `${link.text} (${link.url})` : \"\";\n    });\n\n    return textOnly;\n};\n\n// Processing n8n Input Data\nlet inputData = $json.data; // Assuming the data is under the \"data\" key\n\n// Convert inputData to an array if it's not already one\nif (!Array.isArray(inputData)) {\n    inputData = [inputData];\n}\n\n// Ensure all elements are strings before processing\nlet cleanedData = inputData.map(item => removeHtmlTagsButKeepLinks(String(item || \"\")));\n\n// Return a single object with the first cleaned item\nreturn { json: { cleanedText: cleanedData[0] || \"No valid HTML content found\" } };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -13008,
+        -2416
+      ],
+      "id": "2d172e6a-eeab-48bb-8dd6-128512cea1c2",
+      "name": "Code27"
+    },
+    {
+      "parameters": {
+        "options": {
+          "reset": false
+        }
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -13296,
+        -2784
+      ],
+      "id": "6eb21d41-7449-48f2-92ba-c58423ce7435",
+      "name": "Loop Over Items",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "urls[0]",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -13008,
+        -2624
+      ],
+      "id": "e1d4761d-76d3-4586-af44-e0968509bce9",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "cleanedText"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        -12752,
+        -2416
+      ],
+      "id": "ca669e7a-6776-4258-9f81-4daea5a40f97",
+      "name": "Aggregate20"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -13312,
+        -3040
+      ],
+      "id": "8c1ba14e-72f5-44be-89fa-f60e59f6c5a7",
+      "name": "OpenAI Chat Model33",
+      "credentials": {
+        "openAiApi": {
+          "id": "3a8Mp3wpFNiuZgUr",
+          "name": "OpenAi account for N8N site Preview"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        -14208,
+        -4080
+      ],
+      "id": "28159536-4e65-46c1-b2a9-e3a89a6ca4f6",
+      "name": "Aggregate25",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -14464,
+        -4080
+      ],
+      "id": "1c0947f9-a68c-4ed0-bb27-b7bd7d2616b5",
+      "name": "Merge",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -13792,
+        -3248
+      ],
+      "id": "1cb2a58d-53c3-48da-ba8d-351129127c68",
+      "name": "Merge13",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        -13584,
+        -3248
+      ],
+      "id": "5778d57a-5e9c-4f9e-8a83-0912bf84759c",
+      "name": "Aggregate26",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "numberInputs": 6
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -11920,
+        -3200
+      ],
+      "id": "8908a832-28f1-4a82-b3a7-6dc8f9241c7e",
+      "name": "Merge17"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        -11632,
+        -3136
+      ],
+      "id": "7c8ba10a-1979-4dac-a887-dd560715de9c",
+      "name": "Aggregate27"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -11200,
+        -2912
+      ],
+      "id": "62f29104-f4c6-4c81-b0e7-2d7738a973e1",
+      "name": "OpenAI Chat Model36",
+      "credentials": {
+        "openAiApi": {
+          "id": "3a8Mp3wpFNiuZgUr",
+          "name": "OpenAi account for N8N site Preview"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "[\n  {\n    \"section\": \"About Us\",\n    \"main company\": \"No dedicated page. Scattered mentions only.\",\n    \"Competitor Advantage\": \"Bios, values, histories. Builds trust (e.g., Yancey 80+ yrs).\"\n  }\n]",
+        "autoFix": true
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        -5312,
+        -3056
+      ],
+      "id": "03f1dff0-ad9d-454a-87db-d497fe5dd6c9",
+      "name": "Structured Output Parser8"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=**Main company analysis:**  {{ $('create a brief report').item.json.output }}\n\n**Competitor analysis:** {{ $('Aggregate4').first().json.output }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are a senior website benchmark analyst.\n\n**Task:**  \nUsing the provided competitor analysis and main company analysis, generate a comprehensive comparison table. The table should compare the main company to its top competitors for each major section of the website, clearly indicating areas of strength and weakness for the main company, as well as describing how competitors outperform or differ in each section.\n\n**Analysis Requirements:**\n- **Deep Analysis**: Conduct thorough analysis of ALL competitors provided in the competitor analysis data\n- **Cross-Competitor Comparison**: Compare main company against multiple competitors simultaneously \n- **Pattern Recognition**: Identify common competitive advantages across multiple competitors\n- **Specific Examples**: Reference specific competitor names and their unique strengths when relevant\n\n**Table requirements:**  \n- Output a **list (array) of objects**, where each object is one row of the table.\n- Each row must represent one **specific website section** (e.g., About Us, Blog, Contact Page, Team Presence, Legal Pages, Services, Portfolio, Testimonials, Navigation, User Experience, etc.).\n- For each row/object, include:\n  - `\"section\"`: The name of the website section.\n  - `\"main company\"`: A brief, factual statement about the main company's strength or weakness for that section.\n  - `\"Competitor Advantage\"`: A detailed description of how competitors outperform or differ in that section, including specific competitor examples where applicable (e.g., \"Company X features detailed bios while Company Y shows certifications, making both superior to main company\").\n\n**Analysis Depth Requirements:**\n- **Multiple Competitor Integration**: Synthesize insights from ALL competitors in the analysis\n- **Comparative Ranking**: When multiple competitors excel in an area, identify which ones perform best\n- **Unique Differentiators**: Highlight unique features or approaches used by specific competitors\n- **Industry Standards**: Identify what appears to be industry best practices across competitors\n\n**Output Format:**\n- **Do not summarize the whole website in one row**—provide a separate object for each section.\n- Use clear, business-focused language in each field.\n- Include specific competitor names when referencing unique advantages.\n- Output only the array of objects, with no markdown, no narrative, and no code blocks.\n- **CRITICAL**: Use exact field names: `\"section\"`, `\"main company\"`, `\"Competitor Advantage\"`\n\n**Example output (matching required structure):**\n[\n  {\n    \"section\": \"About Us\",\n    \"main company\": \"No dedicated page. Scattered mentions only.\",\n    \"Competitor Advantage\": \"CompetitorA shows 80+ year history with founder photos, CompetitorB features detailed team bios with certifications, CompetitorC includes company values and mission statements. All build significantly more trust than main company.\"\n  },\n  {\n    \"section\": \"Services Portfolio\", \n    \"main company\": \"Basic service listings with minimal detail.\",\n    \"Competitor Advantage\": \"CompetitorA provides detailed service breakdowns with pricing, CompetitorB shows before/after project galleries, CompetitorC offers service comparison charts. Industry standard includes comprehensive service documentation.\"\n  }\n]\n\n**Processing Instructions:**  \n- Analyze ALL competitors mentioned in the competitor analysis data\n- Cross-reference findings across multiple competitors to identify patterns\n- Prioritize sections where competitive gaps are most significant\n- Include competitor-specific examples in advantage descriptions\n- Infer and use the main company name from the analysis data\n- Provide only the array of row objects, with no introductory or closing text\n- Do not use markdown formatting, code blocks, or any additional narrative\n- **MUST USE EXACT FIELD NAMES**: `\"section\"`, `\"main company\"`, `\"Competitor Advantage\"`\n\n**Input Data:**\n**Competitor analysis:** \n**Main company analysis:** \n\n**End of instructions**"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        -5504,
+        -3264
+      ],
+      "id": "66f5f2cf-364a-49e1-b8cc-e821e1a9c7a7",
+      "name": "Foundational Website Content"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "[\n  {\n    \"Company\": \"GVD Renovations\",\n    \"Unique Strengths\": \"James Hardie Elite, 900+ reviews, Bay Area + Sac coverage\",\n    \"Size\": \"Mid-size\",\n    \"Competitive Gap\": \"Lacks third-party credibility and scale of services\"\n  }\n]",
+        "autoFix": true
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        -5344,
+        -2624
+      ],
+      "id": "a3f200fd-90eb-4523-a3b3-0775a5b1bbac",
+      "name": "Structured Output Parser9"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=**Main company analysis:**  {{ $('create a brief report').item.json.output }}\n\n**Competitor analysis:** {{ $('Aggregate4').first().json.output }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=# System Prompt: Competitive Intelligence Analyst – Multi-Competitor Analysis\n\n## Role:\nYou are a senior competitive intelligence analyst with deep expertise in structured market analysis, multi-competitor assessment, and table-driven reporting. You specialize in conducting comprehensive competitive landscape analysis across multiple market players simultaneously.\n\n## Task:\nGenerate a structured competitor comparison analysis based on the analysis data provided by the user for the main company and multiple competitors. Perform deep competitive analysis across all provided competitors to identify unique market positions, competitive advantages, and specific areas where the main company is disadvantaged relative to each competitor.\n\n## Context:\nThe user will provide analysis data for the main company and multiple competitors (typically 2-10 competitors). Your job is to:\n1. **Deduplicate competitors**: Analyze each unique competitor only once, even if data appears multiple times\n2. Conduct comprehensive analysis across all competitors simultaneously\n3. Identify each competitor's unique market position and competitive advantages\n4. Assess how the main company's capabilities compare against each competitor individually\n5. Create a structured JSON output optimized for strategic business decision-making\n6. Focus on highlighting actionable insights about competitive gaps and market positioning\n\n## Instructions:\n\n### Pre-Analysis Phase (CRITICAL):\n- **Deduplication**: Before analysis, identify all unique competitor names in the provided data\n- **Consolidation**: If the same competitor appears multiple times with different data points, merge all information into a single comprehensive analysis\n- **Single Entry Rule**: Each competitor must appear EXACTLY ONCE in the final output\n- **Data Synthesis**: Combine all available information about each competitor to create the most complete analysis\n\n### Analysis Phase:\n- **Cross-Competitor Analysis**: Compare all competitors against each other to identify truly unique strengths and market differentiators\n- **Gap Analysis**: For each competitor, identify specific areas where the main company lacks capability or market position\n- **Market Positioning**: Assess relative market positions, size, and competitive moats\n- **Strength Validation**: Ensure identified strengths are genuinely unique and not shared across multiple competitors\n- **Comprehensive View**: Synthesize ALL available data points for each competitor into a single, cohesive analysis\n\n### JSON Output Generation:\n- Identify and use the main company's name from the user's input\n- Create a JSON array with objects containing these fields: `Company`, `Unique Strengths`, `Size`, `Competitive Gap`\n- **CRITICAL**: Each competitor company name must appear EXACTLY ONCE in the array\n- **Company Field**: The competitor's name exactly as provided in the analysis (use the most complete/official version if variations exist)\n- **Unique Strengths Field**: Synthesize ALL distinctive advantages from the available data; list only genuinely distinctive advantages that differentiate this competitor from both the main company AND other competitors\n- **Size Field**: Indicate relative market size/scale (Enterprise, Large, Mid-size, Small, Startup, etc.)\n- **Competitive Gap Field**: Provide direct, specific, business-focused reasons explaining how this competitor outperforms the main company; combine insights from all available data\n\n### Quality Standards:\n- **No Duplicates**: Verify that each company name appears only once before finalizing output\n- Use clear, professional business language in all entries\n- Ensure each competitor analysis is distinct and non-repetitive across different competitors\n- Focus on actionable competitive insights rather than generic observations\n- Maintain consistency in analysis depth across all competitors\n- Keep entries concise but comprehensive (aim for 80-150 characters per field)\n- Synthesize multiple data points into coherent, non-redundant insights\n\n## CRITICAL OUTPUT REQUIREMENTS:\n- Output MUST be valid JSON array format starting with [ and ending with ]\n- NO markdown code blocks, explanations, or additional text\n- NO text before or after the JSON array\n- Use EXACTLY these field names: \"Company\", \"Unique Strengths\", \"Size\", \"Competitive Gap\"\n- **ENFORCE UNIQUENESS**: Each company name must appear EXACTLY ONCE in the output array\n- Validate JSON syntax before output\n- Verify no duplicate company entries exist in final output\n\n## Pre-Output Validation Checklist:\nBefore generating output, verify:\n1. ✓ Each competitor name appears only once\n2. ✓ All available data for each competitor has been synthesized\n3. ✓ Insights are specific and differentiated across competitors\n4. ✓ JSON syntax is valid\n5. ✓ No explanatory text outside JSON array\n\n## Required JSON Output Structure Example:\n```json\n[\n  {\n    \"Company\": \"Audus Kitchens\",\n    \"Unique Strengths\": \"130+ years combined experience, regional showrooms, 7-step process, extensive luxury range, multi-location presence, active blog\",\n    \"Size\": \"Large\",\n    \"Competitive Gap\": \"Superior team profiles, showroom network, content freshness, and established processes outperform main company's local approach and limited storytelling\"\n  },\n  {\n    \"Company\": \"Kitchens by Dexter\",\n    \"Unique Strengths\": \"Strong bespoke design focus, detailed team bios with extensive experience, authentic testimonials, clear customer journey, personalized approach\",\n    \"Size\": \"Mid-size\",\n    \"Competitive Gap\": \"More developed team transparency, richer testimonials, and clearer project management processes exceed main company's less personal approach\"\n  }\n]"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        -5504,
+        -2848
+      ],
+      "id": "18851360-aa71-4472-a602-2267bb035de2",
+      "name": "Competitive Comparison Summary"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "output",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -5088,
+        -3216
+      ],
+      "id": "9ac69b25-7629-4f51-a45b-619d9e462533",
+      "name": "Split Out10"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $('Copy file').first().json.id }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Competitive Comparison Summary",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Company": "={{ $json.Company }}",
+            "Unique Strengths": "={{ $json['Unique Strengths'] }}",
+            "Size": "={{ $json.Size }}",
+            "Why you Falls Behind": "={{ $json['Competitive Gap'] }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Company",
+              "displayName": "Company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Unique Strengths",
+              "displayName": "Unique Strengths",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Size",
+              "displayName": "Size",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Why you Falls Behind",
+              "displayName": "Why you Falls Behind",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -4864,
+        -2816
+      ],
+      "id": "447fac7e-c32b-4c40-88a4-e08535c77378",
+      "name": "Append row in sheet6",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "f5288ETPescnVIle",
+          "name": "Aditya Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "output",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -5088,
+        -2816
+      ],
+      "id": "88b4cb50-bb4f-4f11-998f-5a933aa0f1aa",
+      "name": "Split Out11"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "[\n  {\n    \"Metric\": \"PageSpeed Score\",\n    \"Main Company\": \"91% (Excellent)\",\n    \"Comments\": \"✅ Fast loading\"\n  },\n  {\n    \"Metric\": \"LCP / CLS / FCP\",\n    \"Main Company\": \"Within optimal range\",\n    \"Comments\": \"✅ Smooth experience\"\n  },\n  {\n    \"Metric\": \"Issues\",\n    \"Main Company\": \"Unused JS/CSS, large images\",\n    \"Comments\": \"❌ Performance bottlenecks from unused scripts and render delays\"\n  },\n  {\n    \"Metric\": \"Recommendations\",\n    \"Main Company\": \"Optimize third-party scripts, image formats, and layout shifts.\",\n    \"Comments\": \"\"\n  }\n]\n",
+        "autoFix": true
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        -5312,
+        -2208
+      ],
+      "id": "967bf789-29d3-4bff-9744-13828948ea92",
+      "name": "Structured Output Parser10"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "output",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -5088,
+        -2416
+      ],
+      "id": "3b54aa1c-a599-4537-ac28-197b4ce8c658",
+      "name": "Split Out12"
+    },
+    {
+      "parameters": {
+        "operation": "copy",
+        "fileId": {
+          "__rl": true,
+          "value": "1OgU-Jf0VC7TC40vhFlR9tWgzH1d0zeN4GETXfMYvufk",
+          "mode": "list"
+        },
+        "name": "={{ $('Slack Trigger').item.json.blocks[0].elements[0].elements[2].url }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -7648,
+        -2336
+      ],
+      "id": "a46867a7-c51d-4088-aa0d-999683b83ba9",
+      "name": "Copy file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "Y3JAjq2DPOX6AwNv",
+          "name": " Aditya's Google Drive account "
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=**Main company analysis:**  {{ $('create a brief report').item.json.output }}\n\n**Competitor analysis:** {{ $('Aggregate4').first().json.output }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are a senior web performance analyst specializing in competitive analysis.\n\n**Task:**  \nUsing the provided website audit or performance data, generate a comprehensive competitive analysis table. The table should display each metric, the main company's result, all competitor results, and analytical comments comparing performance across all entities.\n\n**Table requirements:**  \n- Columns: Metric, [Main Company Name], [Competitor 1 Name], [Competitor 2 Name], ..., Comments\n- Each row must represent a specific performance metric or audit section (e.g., PageSpeed Score, LCP/CLS/FCP, Issues, Recommendations)\n- In company columns, provide the measurement, value, or finding for each respective company\n- In the \"Comments\" column, provide comparative analysis using:\n  - ✅ for positive/optimized aspects or competitive advantages\n  - ❌ for issues, problems, or competitive disadvantages\n  - 📊 for neutral observations or benchmarking insights\n- Use concise, professional language for each cell\n- Infer and use company names from the user prompt\n- Handle variable numbers of competitors dynamically\n\n**Output format (JSON structure):**\n```json\n[\n  {\n    \"Metric\": \"PageSpeed Score\",\n    \"Main Company\": \"91% (Excellent)\",\n    \"Comments\": \"✅ Fast loading\"\n  },\n  {\n    \"Metric\": \"LCP / CLS / FCP\",\n    \"Main Company\": \"Within optimal range\",\n    \"Comments\": \"✅ Smooth experience\"\n  },\n  {\n    \"Metric\": \"Issues\",\n    \"Main Company\": \"Unused JS/CSS, large images\",\n    \"Comments\": \"❌ Performance bottlenecks from unused scripts and render delays\"\n  },\n  {\n    \"Metric\": \"Recommendations\",\n    \"Main Company\": \"Optimize third-party scripts, image formats, and layout shifts.\",\n    \"Comments\": \"\"\n  }\n]\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        -5488,
+        -2416
+      ],
+      "id": "234c69a8-ddd8-47af-ab41-13e5c5b68ff4",
+      "name": "Technical SEO & Performance"
+    },
+    {
+      "parameters": {
+        "jsCode": "const title = $input.first().json.title || '';\n\nconst isEmpty = title.trim() === '';\n\nreturn [\n  {\n    json: {\n      title_result: isEmpty ? 'empty' : 'not empty'\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -14688,
+        -4176
+      ],
+      "id": "a1e7cbc7-8a48-40ce-b8d9-42245435bf59",
+      "name": "response node for title",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const description = $input.first().json.description || '';\n\nconst isEmpty = description.trim() === '';\n\nreturn [\n  {\n    json: {\n      description_result: isEmpty ? 'empty' : 'not empty'\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -14688,
+        -3984
+      ],
+      "id": "6ee4eb29-b7cb-46d4-a0fa-08e572235961",
+      "name": "response node for description",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=extracted title :-  {{ $('extract title').item.json.title }}\ndoes meta title empty:- {{ $json.data[0].title_result }}\nextracted description :- {{ $('Extract description').item.json.description }}\ndoes description empty :- {{ $json.data[1].description_result }}",
+        "options": {
+          "systemMessage": "=You are a professional content validator. Your task is to analyze the provided JSON input, which is an array containing an object with a \"data\" key. The \"data\" value is an array of objects that each have either a \"title_result\" or \"description_result\" field, with the value \"empty\" or \"not empty\".\n\nYour output must summarize whether the title and description are empty or not, following these rules:\n\n- Always state clearly for both fields whether each is empty or not.\n- Use bullet points for the output.\n- Start each statement with \"The [field] is [empty/not empty].\"\n- Do not provide any extra commentary.\n- If a field is missing, treat it as empty.\n- Only refer to the \"title\" and \"description\" fields.\n\nExamples:\nInput:\n[\n  {\n    \"data\": [\n      { \"title_result\": \"not empty\" },\n      { \"description_result\": \"empty\" }\n    ]\n  }\n]\nOutput:\n- The title is not empty.\n- The description is empty.\n\nInput:\n[\n  {\n    \"data\": [\n      { \"title_result\": \"empty\" },\n      { \"description_result\": \"not empty\" }\n    ]\n  }\n]\nOutput:\n- The title is empty.\n- The description is not empty.\n\nInput:\n[\n  {\n    \"data\": [\n      { \"title_result\": \"empty\" }\n    ]\n  }\n]\nOutput:\n- The title is empty.\n- The description is empty.\n\nInstruction:\nFor any provided input in this format, analyze the \"title_result\" and \"description_result\" fields and produce a summary with two bullet points, clearly stating the emptiness status of each field as shown in the examples.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        -13888,
+        -4080
+      ],
+      "id": "a3b78da4-a633-41c8-ba39-4bfb8f745a99",
+      "name": "response summary of title and description"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.allLinks }}",
+        "options": {
+          "systemMessage": "=Role:\nYou are an experienced web content analyst and service page identification specialist. Your role is to analyze web navigation structures and link collections, identifying whether any provided links represent a service page, then summarizing their content in a concise and professional manner.\n\nTask:\nGiven a JSON array containing objects with an \"allLinks\" key (whose value is an array of link objects), review all the links and determine if any of them are service pages. A service page is defined as a page that describes, promotes, or provides details about specific services offered by a business or professional.\n\nContext:\nThis prompt is for content review, website audit, and SEO optimization scenarios. You will frequently encounter navigation menus, internal/external links, and section anchors in the \"href\" property, along with descriptive or navigational link text in the \"text\" property. Service pages often contain keywords like \"services,\" \"solutions,\" or may describe what the company offers.\n\nFormat:\n- If no service page is found, output: `No service page found.`\n- If one or more service pages are found, output each as a bullet point in the following format:\n  - Service page found: \"[Page Text]\" ([URL])  \n    [Brief summary: 2-3 sentences describing what services are offered or what is available on this page.]\n- Remain factual, clear, and neutral. Do not speculate or provide extra commentary.\n\nExemplars:\n\nExample 1:  \nInput:\n[\n  {\n    \"allLinks\": [\n      { \"href\": \"/\", \"text\": \"Home\" },\n      { \"href\": \"/about\", \"text\": \"About\" },\n      { \"href\": \"/services\", \"text\": \"Services\" },\n      { \"href\": \"/contact\", \"text\": \"Contact\" }\n    ]\n  }\n]\nOutput:\n- Service page found: \"Services\" (/services)  \n  This page provides an overview of the services offered by the business. It typically describes available service categories, features, and ways to engage or inquire.\n\nExample 2:  \nInput:\n[\n  {\n    \"allLinks\": [\n      { \"href\": \"/\", \"text\": \"Home\" },\n      { \"href\": \"/portfolio\", \"text\": \"Portfolio\" },\n      { \"href\": \"/about\", \"text\": \"About\" }\n    ]\n  }\n]\nOutput:\nNo service page found.\n\nExample 3:  \nInput:\n[\n  {\n    \"allLinks\": [\n      { \"href\": \"/interior-design-services\", \"text\": \"Services\" },\n      { \"href\": \"/interior-design-services#new-construction\", \"text\": \"New Construction\" },\n      { \"href\": \"/interior-design-services#full-service-renovations\", \"text\": \"Full-Service Renovations\" },\n      { \"href\": \"/interior-design-services#full-service-interior-design\", \"text\": \"Full-Service Interior Design\" }\n    ]\n  }\n]\nOutput:\n- Service page found: \"Services\" (/interior-design-services)  \n  This page details the range of interior design services provided by the company, including new construction, full-service renovations, and comprehensive interior design solutions. Each service section offers insight into what is included and how clients can benefit.\n\nNotes:\n- Any link with \"service\" in its href or text, or describing types of service (like \"Full-Service Renovations\") should be considered a service page.\n- Anchor links (e.g., \"/interior-design-services#...\") typically refer to specific service sections on a main service page. You may summarize these as one main service page, but mention if distinct services are listed.\n- Ignore links that are for contact, about, portfolio, privacy policy, terms, social media, or other non-service informational pages unless they explicitly describe services.\n- If multiple distinct service pages exist, list each one separately with its own summary.\n- If the service page is inferred from anchor links (e.g., \"Full-Service Renovations\" on \"/interior-design-services\"), you may group them under the main service page but describe the range of services.\n\nTone:\n- Professional, factual, and concise.\n- Do not include opinions or unnecessary details.\n\nInstruction:\nFor any provided JSON array of link objects, analyze all entries. Identify whether any link represents a service page or links to a specific service section. Summarize as per the given format and exemplars.\n\nChain of Thought:\n1. Review each link in the \"allLinks\" array.\n2. Look for links that likely represent service pages based on href, text, or context (such as \"services\" or service descriptions).\n3. Group anchor links as sections of the main service page when appropriate.\n4. Summarize the service page(s) and briefly outline what services are available.\n5. If no service page is identified, state this clearly.\n\nTree of Thought:\n- Consider both top-level \"services\" pages and specific anchor links to service sections.\n- If a service page is ambiguous but likely, make your best expert judgment based on the provided text and href.\n\nEnd of Prompt\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        -13888,
+        -3696
+      ],
+      "id": "0ef5d6f2-f279-4b49-8f9f-87e5b56a7d15",
+      "name": "service page url content",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// More comprehensive HTML entity decoding map\nfunction decodeHtmlEntities(str) {\n  if (!str) return \"\";\n  const entityMap = {\n    amp: '&',\n    lt: '<',\n    gt: '>',\n    quot: '\"',\n    apos: \"'\",\n    nbsp: ' ',\n    ldquo: '“',\n    rdquo: '”',\n    lsquo: '‘',\n    rsquo: '’',\n    hellip: '…',\n    mdash: '—',\n    ndash: '–',\n    copy: '©',\n    reg: '®',\n    trade: '™',\n    // Add more as needed!\n  };\n  return str.replace(/&([a-z]+);/gi, (match, entity) => {\n    return entityMap[entity.toLowerCase()] || match;\n  });\n}\n\nreturn items.map(item => {\n  let htmlString = $input.first().json.h1Tags;\n\n  // Always make sure it's a string\n  if (typeof htmlString !== \"string\") htmlString = String(htmlString);\n\n  // Remove HTML tags\n  let plainText = htmlString.replace(/<[^>]*>/g, '').trim();\n\n  // Decode HTML entities\n  plainText = decodeHtmlEntities(plainText);\n\n  return { json: { plainText } };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -14528,
+        -3360
+      ],
+      "id": "9645e98b-4444-45d2-ac5e-d99619e92865",
+      "name": "refine the h1 tags",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const titleData = $input.first().json.plainText || '';\n\n// Handle if titleData is an array or string\nlet title = '';\nif (Array.isArray(titleData)) {\n  title = titleData.join(' '); // Join array elements into a single string\n} else {\n  title = String(titleData); // Convert to string if it's not already\n}\n\n// Remove HTML tags and decode HTML entities\ntitle = title.replace(/<[^>]+>/g, '').replace(/&hellip;/g, '...').replace(/&[^;]+;/g, '');\n\n// Check if the resulting title is empty (after trimming)\nconst isEmpty = title.trim() === '';\n\nreturn [\n  {\n    json: {\n      H1_result: isEmpty ? 'empty' : 'not empty'\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -14240,
+        -3360
+      ],
+      "id": "6129674b-7591-478f-aabb-ede9580ab36c",
+      "name": "check h1 tag is empty or not",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Comprehensive HTML entity decoder\nfunction decodeHtmlEntities(str) {\n  if (!str) return \"\";\n  const entityMap = {\n    amp: '&',\n    lt: '<',\n    gt: '>',\n    quot: '\"',\n    apos: \"'\",\n    nbsp: ' ',\n    ldquo: '“',\n    rdquo: '”',\n    lsquo: '‘',\n    rsquo: '’',\n    hellip: '…',\n    mdash: '—',\n    ndash: '–',\n    copy: '©',\n    reg: '®',\n    trade: '™',\n    // Add more as needed!\n  };\n  return str.replace(/&([a-z]+);/gi, (match, entity) => {\n    return entityMap[entity.toLowerCase()] || match;\n  });\n}\n\n// Access your headingTags array from previous node\nconst headingTags = $input.first().json.headingTags;\n\n// Map over each heading tag\nreturn headingTags.map(heading => {\n  let htmlString = heading.content;\n\n  // Remove HTML tags\n  let plainText = htmlString.replace(/<[^>]*>/g, '').trim();\n\n  // Decode HTML entities\n  plainText = decodeHtmlEntities(plainText);\n\n  return {\n    json: {\n      tag: heading.tag,\n      plainText\n    }\n  };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -14656,
+        -3136
+      ],
+      "id": "4632cec3-1e95-4217-8050-f67148ba01a6",
+      "name": "clean all the sub tags",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const titleData = $input.first().json.data || '';\n\n// Handle if titleData is an array of objects with plainText property\nlet title = '';\nif (Array.isArray(titleData)) {\n  // Extract plainText from each object and join them\n  title = titleData.map(item => item.plainText || '').join(' ');\n} else if (typeof titleData === 'object' && titleData.plainText) {\n  // If it's a single object with plainText\n  title = titleData.plainText;\n} else {\n  // Convert to string if it's not already\n  title = String(titleData);\n}\n\n// Remove any remaining HTML tags and decode HTML entities\ntitle = title.replace(/<[^>]+>/g, '').replace(/&hellip;/g, '...').replace(/&[^;]+;/g, '');\n\n// Check if the cleaned title is empty (after trimming)\nconst isEmpty = title.trim() === '';\n\nreturn [\n  {\n    json: {\n      Rest_tag_result: isEmpty ? 'empty' : 'not empty'\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -14096,
+        -3136
+      ],
+      "id": "9a0a3017-8cda-49cb-8e4e-22dfdabd6393",
+      "name": "response of tag is empty or not",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Helper function to extract all links from HTML\nconst extractAllLinks = (html) => {\n  // Match all anchor tags with href attributes\n  const linkMatches = [...html.matchAll(/<a\\s+[^>]*href=[\"']([^\"']+)[\"'][^>]*>(.*?)<\\/a>/gi)];\n\n  return linkMatches.map(match => ({\n    href: match[1],\n    text: match[2].trim()\n  }));\n};\n\n// Get input HTML\nconst rawHtml = $json.data || '';\n\n// Extract all links\nconst allLinks = extractAllLinks(rawHtml);\n\n// Return object with extracted links\nreturn {\n  allLinks\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -14976,
+        -2800
+      ],
+      "id": "69c6f6d2-8604-40c0-9efa-46b38a00dda6",
+      "name": "Extract links"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// const jsonData = $json.text || \"\";\n\n// // Extract all URLs from the content\n// const urlRegex = /https?:\\/\\/[^\"'\\s)<>]+/g;\n// const urls = jsonData.match(urlRegex) || [];\n\n// // Return extracted links as a single object\n// return { urls: urls.length > 0 ? urls : \"No links found\" };\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n// const jsonData = $json.text || \"\";\n\n// // Extract all URLs from the content\n// const urlRegex = /https?:\\/\\/[^\"'\\s)<>]+/g;\n// const urls = jsonData.match(urlRegex) || [];\n\n// // Return extracted links as a single object with an array\n// return { urls: urls.length > 0 ? urls : [] };\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nconst jsonData = $json.text || \"\";\n\n// Extract all URLs from the content\nconst urlRegex = /https?:\\/\\/[^\"'\\s)<>]+/g;\nconst urls = jsonData.match(urlRegex) || [];\n\n// Return extracted links as an array of arrays, or a message if empty\nreturn { urls: urls.length > 0 ? [urls] : [[\"No links found\"]] };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -14048,
+        -2784
+      ],
+      "id": "bc76bbbf-1c7a-4da1-9520-da209656acc2",
+      "name": "format the links"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.data }}",
+        "options": {
+          "systemMessage": "=## Prompt: In-Depth Narrative Analysis of Provided Company Website Content (No Table)\n\n**Role:**  \nYou are a seasoned website content analyst with expertise in assessing company web content for clarity, effectiveness, depth, professionalism, and user experience. Your analysis is known for being thorough, specific, and actionable.\n\n---\n\n### **Instructions:**\n\n1. **Overall Approach:**  \n   Thoroughly analyze the company website content provided below. Your report must be fully narrative (not tabular) and should be broken into clear sections and bullets for easy readability. Support every observation with direct references or examples from the content.\n\n2. **Content Coverage & Section Analysis:**  \n   For each major website section (About, Services/Products, Blog/News/Updates, Contact, Team/Leadership, FAQ/Support):\n   - Clearly state whether the section is present.\n   - Summarize and evaluate its content, purpose, depth, and quality.\n   - Mention if any section is missing or inadequate.\n   - **Use bullet points** to highlight specific strengths and weaknesses for each section.\n   - Provide quotes or summaries from the actual content as evidence.\n\n3. **Structure & Formatting:**  \n   - Assess the use of headings, subheadings, bullet lists, paragraphs, internal links, images, and media.\n   - Discuss how the structure impacts readability, navigation, and user experience.\n   - Point out any clutter, lack of organization, or missed opportunities for clarity.\n   - **Use bullets for key findings.**\n\n4. **Content Freshness & Originality:**  \n   - Analyze the timeliness of content, especially in blog/news sections (mention last update date if available).\n   - Point out any signs of outdated, generic, boilerplate, or placeholder content.\n   - Evaluate whether the writing sounds unique, professional, and relevant to the brand.\n\n5. **Professionalism & Formatting Consistency:**  \n   - Examine capitalization of business and contact names, consistency of email and phone formatting, and overall presentation professionalism.\n   - Note any inconsistencies or issues found in naming or formatting.\n   - **Use bullets for clarity.**\n\n6. **Actionable Recommendations:**  \n   - After your analysis, provide a **prioritized bullet list** of concrete recommendations to improve the content, structure, or presentation.\n   - Recommendations must be specific to the provided content (not generic).\n\n---\n\n### **Expected Output Structure:**\n\n- **Section-by-section narrative analysis** with subheadings and bullets.\n- **Evidence and examples** from the content.\n- **Actionable recommendations** at the end.\n- Analytical, objective, and constructive tone throughout.\n\n---\n\n### **How to Use:**\n\nPaste the company website content (HTML/text) below this prompt for the agent to analyze. All findings must reference the provided content.\n\n---\n\n**[END OF PROMPT]**\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        -12432,
+        -2800
+      ],
+      "id": "d057b76b-73a9-4f82-9386-70a8ac39b038",
+      "name": "create a summary of the content"
+    },
+    {
+      "parameters": {
+        "url": "=https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url={{ $('AI Agent3').item.json.output.mainUrl }}&key=AIzaSyCfnpt825iPxbNNjr4xozbZt8mbfTf76Xc",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -14704,
+        -2224
+      ],
+      "id": "60499a8f-9388-49de-8205-71c0233f2d0c",
+      "name": "pagespeed"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ JSON.stringify($json.captchaResult) }}\n{{ JSON.stringify($json.kind) }}\n{{ JSON.stringify($json.id) }}\n{{ JSON.stringify($json.loadingExperience) }}\n{{ JSON.stringify($json.lighthouseResult) }}\n{{ JSON.stringify($json.analysisUTCTimestamp) }}",
+        "options": {
+          "systemMessage": "# PROMPT: Generate a Concise PageSpeed / Lighthouse Audit Summary\n\nYou are an expert web performance analyst. Your task is to generate a concise, actionable summary from a PageSpeed / Lighthouse report in JSON or similar key-value format. The report structure is similar to the following keys:\n\n- id\n- requestedUrl\n- loadingExperience\n- lighthouseResult (contains audits, opportunities, diagnostics)\n- runWarnings\n- categories\n\n## Instructions\n\n1. **Extract only the following data points:**\n    - **Website URL:** Use the value from `id` or `requestedUrl`.\n    - **Field Data (if present):** Summarize key metrics from `loadingExperience` such as real user FCP, LCP, INP, CLS, etc.\n    - **Overall Category Scores:** List the top-level scores from `categories` (e.g., Performance, Accessibility, Best Practices, SEO).\n    - **Performance Metrics:** From `lighthouseResult.audits`, extract values for:\n        - First Contentful Paint (FCP)\n        - Largest Contentful Paint (LCP)\n        - Cumulative Layout Shift (CLS)\n        - Interaction to Next Paint (INP) or Total Blocking Time (TBT)\n        - Speed Index (if available)\n    - **Key Opportunities for Improvement:** From `lighthouseResult.audits`, list the most impactful opportunities (those with non-zero estimated savings), such as:\n        - Eliminate render-blocking resources\n        - Serve images in next-gen formats\n        - Reduce unused JavaScript\n        - Use efficient cache lifetimes\n        - Optimize image delivery\n        - Avoid long main-thread tasks\n      For each, include:\n        - Title of the opportunity\n        - Estimated savings (in ms or KiB)\n        - List of main affected URLs/files (if provided)\n        - Brief recommendation (from description if available)\n    - **Warnings/Errors:** If `runWarnings` contains messages, list them.\n    - **Audit Timestamp:** Include the fetch time or analysis timestamp (if available).\n\n2. **DO NOT include:**\n    - Nodes, DOM element coordinates, screenshot image data, i18n, categoryGroups, fullPageScreenshot, or any low-level internal attributes.\n    - Configuration or environment details (unless specifically asked).\n\n3. **Summary Format:**\n    - Structure the output as a **professional summary** with clear headings for each section.\n    - Use bullet points for lists, tables for multiple key-value pairs if suitable, and make recommendations actionable.\n    - Use plain English, avoid jargon, and make the summary readable by non-technical stakeholders.\n\n## Example Output\n\n**Website:** https://www.kmldesignsllc.com/\n\n**Audit Timestamp:** 2025-07-30 06:25 UTC\n\n### Field Data (Real User Experience)\n- First Contentful Paint: [value]\n- Largest Contentful Paint: [value]\n- Cumulative Layout Shift: [value]\n- ...\n\n### Lighthouse Category Scores\n- Performance: 67\n- Accessibility: 90\n- Best Practices: 85\n- SEO: 92\n\n### Performance Metrics\n- First Contentful Paint (FCP): 1.0s\n- Largest Contentful Paint (LCP): 2.1s\n- Cumulative Layout Shift (CLS): 0.01\n- Interaction to Next Paint (INP): 220ms\n\n### Key Opportunities for Improvement\n- **Eliminate render-blocking resources**\n  - Est. savings: 440ms\n  - Affected files: [URL1, URL2, ...]\n  - Recommendation: Deliver critical JS/CSS inline, defer non-critical resources.\n- **Serve images in next-gen formats**\n  - Est. savings: 410KiB\n  - Affected files: [URL1, URL2, ...]\n  - Recommendation: Convert images to WebP or AVIF.\n- ...\n\n### Warnings / Errors\n- [Any warnings or errors listed]\n\n---\n\n**Remember:** Focus only on actionable, high-impact insights for web performance optimization. Ignore any unrelated or low-level metadata."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        -13984,
+        -2224
+      ],
+      "id": "21d2b1ed-ab2c-4aab-8840-634f28027c92",
+      "name": "create a summary of the pagespeed content"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=structured data :- {{ JSON.stringify($json.data )}}\n",
+        "options": {
+          "systemMessage": "=# System Prompt: AI Business Audit Generator (Phase 1)\n\n## **Role**\nYou are a veteran Business Analyst AI with deep expertise in digital audits, content quality, and competitor analysis. Your job is to analyze company web data and generate actionable, highly detailed business audit reports.\n\n---\n\n## **Objective / Task**\nProduce a thorough, evidence-based company web audit using provided scraped input data. Your report must **cover and deeply analyze every parameter below**, highlight missing elements, and provide actionable insights with business relevance.\n\n---\n\n## **Parameters & Elaboration (Analyze ALL of the following):**\n\n### 1. **Service Page Presence**\n- **Does the website have a dedicated “Service” or “Services” page? (Yes/No)**\n  - If Yes:  \n    - Analyze its depth, range of services described, clarity, and accessibility from the homepage or main menu.\n    - Note use of call-to-action, contact options, and unique selling points.\n  - If No:  \n    - Discuss impact on user trust, navigation, and lead generation.\n    - Suggest alternatives found (if any) where services are described.\n\n---\n\n### 2. **Quality and Presence of Core Content**\n- **Check for, and analyze quality of:**\n  - About/Company page: Company story, leadership, values, trust signals.\n  - Service(s) page: As above.\n  - Blog/Insights/News: Existence, update frequency, topical relevance, depth (not just list of posts).\n  - Contact page: Availability, completeness (address, map, contact form, direct email/phone).\n- **Comment on:**\n  - Content richness, uniqueness, and level of detail.\n  - Freshness/recency of content (blog last updated?).\n  - Any missing standard page and impact on user perception.\n  - Low word count:  \n    - Highlight if any key pages are unusually brief or lack detail.  \n    - Discuss the potential effect on SEO, authority, and user experience.\n\n---\n\n### 3. **SEO Metadata Check**\n- **For each major page, check:**\n  - Title tag: Presence, accuracy, use of relevant keywords, and clarity.\n  - Meta description: Presence, relevance, engagement, and keyword use.\n  - Note missing, duplicate, or irrelevant metadata.\n  - Comment on whether metadata is well-aligned to what the page actually contains.\n\n---\n\n### 4. **Use of Headings Structure (H1, H2, etc.)**\n- **Assess:**\n  - H1: Presence (only one per page?), relevance, and descriptive quality.\n  - H2/H3: Proper use for content hierarchy? Clear, useful headings?\n  - Any misuse (multiple H1s, missing headings, off-topic headings).\n  - How heading structure helps/hinders SEO and readability.\n\n---\n\n### 5. **Page Speed / Core Web Vitals (if available)**\n- **If page speed or Core Web Vitals data is provided (either as metrics or summary):**\n  - Report on load times, Largest Contentful Paint (LCP), Cumulative Layout Shift (CLS), First Input Delay (FID).\n  - Website loading (Joint):  \n    - Note any joint loading issues (e.g., slow elements like sliders, large images, embedded media, third-party scripts causing delays).\n    - Discuss impact on user engagement, SEO, and conversion.\n  - Suggest concrete improvements if weaknesses are found.\n\n---\n\n### 6. **Formatting Check: Initial Capitalization on Business and Contact Names**\n- **Check that business names, contact persons, and key headings use correct initial capitalization.**\n  - Highlight errors or inconsistencies, and explain their effect on professionalism and trust.\n\n---\n\n### 7. **Keyword List**\n- **Extract all significant keywords (or keyword phrases) evident from core page content and metadata.**\n  - Present as a bulleted list.\n  - Analyze relevance to company’s sector/offerings and local search intent.\n  - Comment on coverage or missed keyword opportunities.\n\n---\n\n### 8. **Company Profile & Competitive Insights**\n- **Company Location & Size:**  \n  - Extract physical address/location, mention of city/region, and any indicators of company size (employee count, team page, client logos, or statements in content).\n- **Competitive Context:**  \n  - Based on location, sector, or service area, comment on potential local competitors or benchmarks.\n  - Discuss how content, services, or SEO practices compare to typical competitors in the area/industry.\n  - Identify unique strengths or clear weaknesses.\n\n---\n\n## **Report Format**\n- Use clear headings matching each section above.\n- Provide bulleted or numbered points for clarity and actionability.\n- All findings must be based on the provided input; **never hallucinate.**\n- Where data is missing or unclear, note it, and comment on the business impact.\n\n---\n\n## **Tone & Style**\n- Analytical, factual, and professional.\n- Avoid jargon, and explain any technical points.\n- All comments must be actionable and relevant to business improvement.\n\n---\n\n## **Example Output Structure**\n\n```markdown\n# [Company Name] – In-depth Web Audit Report\n\n## 1. Service Page Presence\n- Service page present (Yes/No): [Details and analysis...]\n\n## 2. Quality and Presence of Core Content\n- About page: [analysis...]\n- Services page: [analysis...]\n- Blog: [analysis...]\n- Contact page: [analysis...]\n- Low word count: [any concerns + effect...]\n\n## 3. SEO Metadata Check\n- Title/Meta description by page: [details...]\n\n## 4. Headings Structure\n- H1: [details...]\n- H2/H3: [details...]\n\n## 5. Page Speed / Core Web Vitals\n- Metrics: [details...]\n- Website loading (Joint): [details and effect...]\n\n## 6. Formatting: Initial Capitalization\n- [details...]\n\n## 7. Keyword List\n- [bulleted list + comments]\n\n## 8. Company Profile & Competitive Insights\n- Location: [details...]\n- Size: [details...]\n- Competitor analysis: [details...]\n\n## **Final Note**\n- Never fabricate information. If any section cannot be completed due to missing data, explicitly state so and discuss possible implications for business or competitive analysis."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        -11200,
+        -3136
+      ],
+      "id": "8c877742-525c-41e2-a76d-c151d5e2f1ab",
+      "name": "create a brief report"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.output.mainUrl }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Referer",
+              "value": "https://www.google.com"
+            },
+            {
+              "name": "Accept-Language",
+              "value": "en-US,en;q=0.5"
+            },
+            {
+              "name": "Accept",
+              "value": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+            },
+            {
+              "name": "User-Agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -15536,
+        -3616
+      ],
+      "id": "ae54477c-369a-4c61-b42e-6152fa505525",
+      "name": "HTTP Request15"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json['urls[0]'] }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Referer",
+              "value": "https://www.google.com"
+            },
+            {
+              "name": "Accept-Language",
+              "value": "en-US,en;q=0.5"
+            },
+            {
+              "name": "Accept",
+              "value": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+            },
+            {
+              "name": "User-Agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -12768,
+        -2624
+      ],
+      "id": "b4417e44-9388-4ad4-b9c5-98581bd8445c",
+      "name": "HTTP Request16",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=h1 headings :-  {{ $('Extract H1 tags').item.json.h1Tags[0] }}\nis this empty :- {{ $json.data[0].H1_result }}\nsub headings :- {{ JSON.stringify($node[\"Extract sub tags\"].json.headingTags) }}\nis sub headings empty :- {{ $json.data[1].Rest_tag_result }}",
+        "options": {
+          "systemMessage": "Role:\nYou are a highly experienced content quality analyst with a specialty in heading structure validation for digital content. Your expertise includes analyzing and verifying the presence and completeness of heading elements such as H1 and subheadings (H2, H3, H4, etc.), ensuring all critical page elements are present.\n\nTask:\nAnalyze the provided content object containing details about H1 headings and subheadings. Generate a summary that clearly states whether the H1 heading is empty or not, and whether the subheadings array is empty or not.\n\nContext:\nThis prompt is for use in content QA, web accessibility, and SEO workflows, where proper heading structure is essential for both user experience and technical optimization. Headings help organize content and are vital for navigation and understanding.\n\nFormat:\n- Output two bullet points:\n  - The H1 heading is [empty/not empty].\n  - The subheadings are [empty/not empty].\n- If a heading or subheadings are missing, treat them as empty.\n- No extra commentary; only factual, clear statements as specified.\n\nExemplars:\n\nExample 1:\nInput:\nh1 headings :-  \nis this empty :- empty\nsub headings :- []\nis sub headings empty :- empty\n\nOutput:\n- The H1 heading is empty.\n- The subheadings are empty.\n\nExample 2:\nInput:\nh1 headings :-  Tailored Luxury Living\nis this empty :- not empty\nsub headings :- [{\"tag\":\"h2\",\"content\":\"Elevate Your Home\"}]\nis sub headings empty :- not empty\n\nOutput:\n- The H1 heading is not empty.\n- The subheadings are not empty.\n\nExample 3:\nInput:\nh1 headings :-  \nis this empty :- empty\nsub headings :- [{\"tag\":\"h2\",\"content\":\"Elevate Your Home\"},{\"tag\":\"h3\",\"content\":\"Service Section\"}]\nis sub headings empty :- not empty\n\nOutput:\n- The H1 heading is empty.\n- The subheadings are not empty.\n\nExample 4:\nInput:\nh1 headings :-  Welcome!\nis this empty :- not empty\nsub headings :- []\nis sub headings empty :- empty\n\nOutput:\n- The H1 heading is not empty.\n- The subheadings are empty.\n\nNotes:\n- Always refer to both the H1 heading and subheadings in the summary.\n- Consider whitespace-only values as empty.\n- If subheadings array exists but is empty, treat as empty.\n- Only base your statements on the provided input fields.\n- Do not infer, speculate, or add extra commentary.\n\nTone:\n- Professional, neutral, and clear.\n\nInstruction:\nGiven an input object that specifies the H1 heading, its empty status, the subheadings array, and its empty status, produce a summary using two bullet points, as shown in the exemplars. Clearly state whether the H1 heading is empty or not and whether the subheadings are empty or not, using only the information provided.\n\nChain of Thought:\n1. Read the value and status of the H1 heading.\n2. Read the value and status of the subheadings array.\n3. For each, determine if it is empty or not based on the provided \"is this empty\" and \"is sub headings empty\" fields.\n4. Output two bullet points: one for H1, one for subheadings, matching the specified format.\n\nTree of Thought:\n- If both H1 and subheadings are empty, reflect this in both bullet points.\n- If one is empty and the other is not, state each accurately.\n\nEnd of Prompt"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        -13312,
+        -3248
+      ],
+      "id": "af61088c-e0a0-4143-b6af-b28356feedf1",
+      "name": "check headings1",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -14704,
+        -2784
+      ],
+      "id": "ab64c151-c244-40ee-89ba-0beefb574c1a",
+      "name": "Merge20"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "urls[0]",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -13824,
+        -2784
+      ],
+      "id": "57498460-79bc-4b43-9e27-fbc77f0c2c2a",
+      "name": "Split Out13"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.removeDuplicates",
+      "typeVersion": 2,
+      "position": [
+        -13584,
+        -2784
+      ],
+      "id": "c2a3a62e-6c91-4654-822a-3a288a67587b",
+      "name": "Remove Duplicates1"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        -12720,
+        -2800
+      ],
+      "id": "7c8dde10-f033-45cc-8962-89ea3d91e380",
+      "name": "Aggregate31"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=**Main company analysis:**  {{ $('create a brief report').item.json.output }}\n\n**Competitor analysis:** {{ $('Aggregate4').first().json.output }}",
+        "options": {
+          "systemMessage": "=**ROLE & CONTEXT**  \nYou are acting as a **Senior Company Comparison Analyst** with over a decade of experience in digital strategy, SEO, web usability, and competitive intelligence. Your role is to deliver comprehensive, stakeholder-ready **Performance Benchmark Reports** that enable business owners and marketing leaders to understand:\n\n- **How their website and digital presence compare** to the top 3–5 regional competitors in their industry.\n- **Which specific content, SEO, UX, or trust signals are lacking** vs. the market.\n- **Actionable, prioritized recommendations** to rapidly close competitive gaps.\n\n**TASK OBJECTIVE**  \nGenerate a **Performance Benchmark Report** that:\n\n- **Highlights current strengths** in the client’s digital presence.\n- **Identifies specific weaknesses or gaps** relative to competitors.\n- Provides **clear, actionable recommendations** with prioritization for immediate improvement.\n\n**CONTEXT & INTENT**  \nThe client operates in a competitive service niche (e.g., **home remodeling in Sacramento**) and seeks to understand why they are being outperformed online. Your report must offer both a **quantitative** (SEO, performance) and **qualitative** (content, UX, trust) comparison to direct competitors, providing actionable clarity:  \n**“You’re falling behind here — and here’s how we’ll fix it.”**\n\n**INPUTS YOU WILL RECEIVE**  \n- Client company name and website URL  \n- Industry type and service area  \n- 3–5 direct competitor names/websites (if not provided, generate realistic examples for the location/industry)\n\n**ANALYSIS WORKFLOW**  \nApply the following stepwise process:\n\n1. **Website Scanning:** Review Home, Services, About, Contact, Blog, Legal pages.  \n2. **Technical SEO:** Analyze Core Web Vitals, page speed, metadata, and page structure.  \n3. **Content Review:** Assess clarity, relevance, tone, formatting, and trust factors.  \n4. **Brand & Trust Signals:** Evaluate imagery, staff bios, company history, licenses, awards.  \n5. **UX & CTA Quality:** Critique layout, calls-to-action, and mobile experience.  \n6. **Competitor Comparison:** Directly benchmark each major section and feature.  \n7. **Gap Identification:** Summarize where the client underperforms or is missing elements.  \n8. **Strategic Recommendations:** List prioritized, actionable improvements.\n\n**REPORT OUTPUT FORMAT**  \n- Use **only text, bullet points, and subpoints.**  \n- **NO tables, markdown formatting, code blocks, or tabular output** whatsoever.  \n- All content must be **bolded for Google Docs**: wrap each phrase in double asterisks (**like this**) for export compatibility.  \n- Organize findings under clear main sections using emoji headers (e.g., **1️⃣, 2️⃣, 3️⃣**).  \n- Label all subsections clearly.  \n- Do **not** include any formatting/meta instructions or markdown—**output should be ready to paste into Google Docs for client review**.\n\n**TONE & STYLE**  \n- Speak directly to business owners, marketing executives, and stakeholders.  \n- Use a **consultative, professional, and constructive** tone—never negative or overly technical.  \n- Emphasize **opportunity, growth, and next steps**.  \n- Structure content for rapid, actionable stakeholder understanding.\n\n**EXEMPLAR OUTPUT STRUCTURE (for reference, do NOT include in your final output):**\n\nRossle Homes Performance Benchmark Report  \n**Objective:** Demonstrate where **Rossle Homes** underperforms relative to competitors of similar size in the **Sacramento remodeling market**.\n\n1️⃣ Core Service Page Quality  \n**Strengths:**\n- Dedicated pages for all major services (e.g., **Kitchen, Bathroom, ADUs, Electrification**).\n- Strong layout: **clear structure, detailed content, and good CTAs**.\n- Highlights: **3D renders, daily updates, licensed teams**.\n\n**Gaps Compared to Competitors:**\n- No standout unique selling proposition (e.g., **Competitor 1 is James Hardie Elite**).\n- No hyper-local targeting (missing mentions of neighborhoods like **Natomas** or **East Sac**).\n- No dynamic service widgets/tools (such as **estimate calculators** or **interactive galleries**).\n\n2️⃣ SEO & Metadata Review  \n**Rossle Homes:**\n- Titles and meta descriptions are present and keyword-optimized.\n- Legal metadata references different domains and addresses, which hurts trust and SEO.\n- Keyword list is solid (service + city-based), but lacks neighborhood focus.\n\n**Opportunity:**\n- Add neighborhood-specific keywords (e.g., **“East Sacramento ADU builder”**).\n- Incorporate long-tail queries around topics like **financing** or **rebates**.\n\n3️⃣ Content & Formatting Quality\n- Consistent capitalization and contact info formatting across pages.\n- Minor typos and missing spaces reduce the overall polish.\n- No clear editorial tone or storytelling that **humanizes the brand**.\n\n4️⃣ Key Shortcomings Identified\n- No **About Us** or team section → weak trust signals.\n- Inconsistent legal information → risks credibility and confuses users.\n- Missing **hyper-local SEO** → low visibility in neighborhood searches.\n- No community-building blog or easily shareable content.\n- No high-authority badges or recognitions (vs. competitors with **4.9+ ratings**, **Elite status**).\n\n5️⃣ Agency Recommendation Priorities\n- **Add an About Us page** with company story, mission, and leadership profiles.\n- **Fix metadata and domain inconsistencies** across all legal and contact pages.\n- **Expand local SEO** with neighborhood-specific keywords and service areas.\n- **Incorporate team profiles** and authentic project stories on the website.\n- **Consolidate and enhance FAQ content; add blog sharing features**.\n- **Optimize performance** by reducing unused code/scripts and updating image assets.\n- **Highlight trust elements:** badges, certifications, awards, and verified reviews.\n\n**PROMPT TECHNIQUES**\n- Use **few-shot reasoning** by benchmarking against real or generated competitors.\n- Employ **chain-of-thought logic** to clearly surface technical/content gaps.\n- Present output ONLY as text with Google Docs bold, using bullets and emoji section headers.\n- **Do NOT** use tables, markdown, or code blocks in your report output.\n\n**YOUR INSTRUCTION:**  \nProduce the full Performance Benchmark Report as described above, using the given company details and competitive set. All output must be bullet points with Google Docs bold formatting only, organized with emoji section headers. **NO tables, markdown, or code blocks in the report output.**\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        -5584,
+        -3696
+      ],
+      "id": "1b4e1bae-b532-4d17-b602-604311ab33a7",
+      "name": "Main document"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.output }}",
+        "options": {
+          "systemMessage": "=You are an expert content-to-HTML converter. Convert the provided plaintext/markdown-like report into a clean, semantic HTML5 document.\n\n## INPUT\n{{ $json.output }}\n\n## GOAL\nOutput a fully formed HTML document that preserves the structure and emphasis of the input (titles, sections, subsections, lists, bold text), using correct HTML tags.\n\n## MAPPING RULES\n1) Document shell:\n   - Include: <!doctype html>, <html lang=\"en\">, <head> with <meta charset=\"utf-8\"> and <meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">, and <title> set from the main H1 text.\n   - Wrap content in <body>. No inline CSS or scripts.\n\n2) Headings:\n   - The very first line/title becomes <h1>.\n   - Each numbered section like “1️⃣ …”, “2️⃣ …”, etc. becomes <h2>.\n   - Subsection labels such as “**Strengths:**”, “**Gaps Compared to Competitors:**”, “**Recommendations:**”, “**Observations:**”, “**Priority X:**”, and “**Final Summary**” become <h3>.\n   - Add id attributes to all headings using a lowercase, kebab-case slug (e.g., id=\"core-service-page-quality\").\n\n3) Emphasis & inline:\n   - Convert **bold** to <strong> and *italics* to <em>.\n   - Preserve emojis and punctuation.\n   - Keep quoted phrases as-is.\n\n4) Lists & paragraphs:\n   - Hyphen (“- ”) bullet lists → <ul><li>…</li></ul>.\n   - Ordered/numbered sequences that are truly stepwise → <ol>.\n   - Non-list text becomes <p>, one paragraph per logical block.\n   - Keep embedded colons in subsection headings out of list items.\n\n5) Horizontal rules:\n   - Lines containing only “---” become <hr>.\n\n6) Links & media:\n   - Do not invent links or images. If URLs exist, wrap in <a href=\"…\">…</a>.\n\n7) Accessibility & cleanliness:\n   - Use semantic tags (<section> wrapping each <h2> block is encouraged).\n   - No extraneous attributes, styles, or classes.\n   - Ensure valid, well-indented HTML.\n\n## OUTPUT\nReturn ONLY the final HTML document, nothing else.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.1,
+      "position": [
+        -5232,
+        -3696
+      ],
+      "id": "081b35eb-5729-42ab-ad5d-130b4952a834",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleDriveOAuth2Api",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "uploadType",
+              "value": "multipart"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "multipart/related; boundary=foo_bar_baz"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "multipart/related; boundary=foo_bar_baz",
+        "body": "=--foo_bar_baz\nContent-Type: application/json; charset=UTF-8\n\n{\n  \"name\": \"Company Analysis({{ $json.title }})\",\n  \"mimeType\": \"application/vnd.google-apps.document\"\n}\n\n--foo_bar_baz\nContent-Type: text/html; charset=UTF-8\n\n{{ $('AI Agent').first().json.output }}\n\n--foo_bar_baz--",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -4528,
+        -3696
+      ],
+      "id": "6cec1317-9dc6-464d-9ecb-6f04b6bba4f4",
+      "name": "Putting Content in the Google Docs",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "Y3JAjq2DPOX6AwNv",
+          "name": " Aditya's Google Drive account "
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const html = $input.first().json.output;\n\n// Use regex to extract <h1>…</h1>\nconst match = html.match(/<h1[^>]*>(.*?)<\\/h1>/i);\n\nlet title = null;\nif (match && match[1]) {\n  title = match[1].trim();\n}\n\nreturn [{ json: { title } }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -4848,
+        -3696
+      ],
+      "id": "777bf900-2cc2-4bb1-9583-b289526aad09",
+      "name": "Code1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=**WhatCMS Data**\n{{ JSON.stringify($node[\"Aggregate1\"].json) }}",
+        "options": {
+          "systemMessage": "You are an expert web technology analyst. Your task is to generate a concise, actionable summary from a WhatCMS (or similar) tech detection API response in JSON or key-value format. The report structure is similar to the following keys:\n1 request (includes the original website URL)\n2 results (contains detected technologies, versions, and categories)\n3 last_checked (timestamp)\nInstructions\nExtract only the following data points:\nWebsite URL: Use the value from the request field (or the user-provided URL).\nDetected Technologies: From the results array, list each detected technology with:\nName (e.g., Amazon CloudFront)\nVersion (if available)\nCategory (e.g., CDN, CMS, Analytics)\nReference URL (if available)\nAudit Timestamp: Use last_checked if provided.\nDO NOT include:\nIDs, codes, meta fields, or irrelevant attributes.\nLow-level internal API response details.\nSummary Format:\nStructure the output as a professional summary with clear headings.\nUse bullet points for multiple technologies.\nKeep it concise, non-technical, and stakeholder-friendly."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        -13872,
+        -1840
+      ],
+      "id": "267db55f-a235-42a9-b17f-039f8489085c",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -5552,
+        -3056
+      ],
+      "id": "0901524b-5773-4038-a4b4-28e7be765b1e",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "3a8Mp3wpFNiuZgUr",
+          "name": "OpenAi account for N8N site Preview"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $('Copy file').first().json.id }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Foundational Website Content",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Section": "={{ $json.section }}",
+            "client analysis ": "={{ $json['main company'] }}",
+            "competitor analysis ": "={{ $json['Competitor Advantage'] }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Section",
+              "displayName": "Section",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "client analysis ",
+              "displayName": "client analysis ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "competitor analysis ",
+              "displayName": "competitor analysis ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -4864,
+        -3216
+      ],
+      "id": "8f32e31c-c6b8-43d3-a14c-721fdca42082",
+      "name": "Append row in sheet3",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "f5288ETPescnVIle",
+          "name": "Aditya Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -4528,
+        -3216
+      ],
+      "id": "8e518b9e-7cf0-4f84-82b7-bec2482a3827",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -4528,
+        -2816
+      ],
+      "id": "ae9ab56d-8996-4705-a3b8-1c19e5d40fb5",
+      "name": "No Operation, do nothing1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -4496,
+        -2416
+      ],
+      "id": "654d1fa5-d7f7-412f-915c-32a815b5e813",
+      "name": "No Operation, do nothing2"
+    },
+    {
+      "parameters": {
+        "operation": "move",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "={{ $('Create folder2').item.json.id }}",
+          "mode": "id"
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -4992,
+        -1888
+      ],
+      "id": "265fea91-e547-4914-8438-ab81aea0b9de",
+      "name": "Move file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "Y3JAjq2DPOX6AwNv",
+          "name": " Aditya's Google Drive account "
+        }
+      }
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        -14176,
+        -1840
+      ],
+      "id": "9ae25d80-6519-4b74-8d82-f588b015d328",
+      "name": "Aggregate1"
+    },
+    {
+      "parameters": {
+        "url": "=https://whatcms.org/API/Tech",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "key",
+              "value": "w322buariuhw06o6frbv4ld7ghx9kyn0mnjin5yhhnh79whspnwt1d8yew09j23m4eb34r"
+            },
+            {
+              "name": "url",
+              "value": "={{ $json.output.mainUrl }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -14448,
+        -1840
+      ],
+      "id": "460d8e39-3cb4-4831-8ed0-638d2350e91c",
+      "name": "whatscms"
+    },
+    {
+      "parameters": {
+        "operation": "move",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Putting Content in the Google Docs').item.json.id }}",
+          "mode": "id"
+        },
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "={{ $('Create folder2').first().json.id }}",
+          "mode": "id"
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -4240,
+        -3696
+      ],
+      "id": "3a9b0af9-6a18-468c-99a9-37e06fa8eadc",
+      "name": "Move file1",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "Y3JAjq2DPOX6AwNv",
+          "name": " Aditya's Google Drive account "
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "folder",
+        "name": "={{ $('Slack Trigger').item.json.blocks[0].elements[0].elements[2].url }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "16oxz71ZbNLEfyaXq6xIqlLbfR50HZ6o2",
+          "mode": "list",
+          "cachedResultName": "COMPETITOR RESEARCH REPORT",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/16oxz71ZbNLEfyaXq6xIqlLbfR50HZ6o2"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -8320,
+        -2336
+      ],
+      "id": "9cf34e73-72dc-4f89-ba76-b3c12a184aa8",
+      "name": "Create folder2",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "Y3JAjq2DPOX6AwNv",
+          "name": " Aditya's Google Drive account "
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5a27153a-67fc-45bf-9600-2195d089970c",
+              "name": "websitelink",
+              "value": "={{ $json.output.mainUrl }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -15744,
+        -2784
+      ],
+      "id": "75944ca8-1642-4559-a8b4-52e2385fb777",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -3440,
+        -2656
+      ],
+      "id": "40a872f1-cad3-482a-820c-bb442d5a2c50",
+      "name": "Merge1"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -13888,
+        -3888
+      ],
+      "id": "30156ddb-b8db-43c1-a391-73f551a138a5",
+      "name": "OpenAI Chat Model34",
+      "credentials": {
+        "openAiApi": {
+          "id": "3a8Mp3wpFNiuZgUr",
+          "name": "OpenAi account for N8N site Preview"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get the full API response\nconst data = $input.first().json;\n\n// Remove full page screenshot\nif (data.lighthouseResult?.fullPageScreenshot?.screenshot) {\n  delete data.lighthouseResult.fullPageScreenshot.screenshot;\n}\n\n// Remove final screenshot\nif (data.lighthouseResult?.audits?.['final-screenshot']) {\n  delete data.lighthouseResult.audits['final-screenshot'].details.data;\n}\n\n// Remove screenshot thumbnails\nif (data.lighthouseResult?.audits?.['screenshot-thumbnails']) {\n  data.lighthouseResult.audits['screenshot-thumbnails'].details.items.forEach(item => {\n    delete item.data;\n  });\n}\n\nreturn [{ json: data }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -14352,
+        -2224
+      ],
+      "id": "1eebf643-969f-47b9-984b-60d52da8ad27",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -6864,
+        -3136
+      ],
+      "id": "d664f814-88bd-423c-b5c6-b85e52ff1ba0",
+      "name": "Merge2"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -5520,
+        -2624
+      ],
+      "id": "22e17bc5-0545-4bcb-8645-90e9e3778be6",
+      "name": "OpenAI Chat Model2",
+      "credentials": {
+        "openAiApi": {
+          "id": "3a8Mp3wpFNiuZgUr",
+          "name": "OpenAi account for N8N site Preview"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -5520,
+        -2208
+      ],
+      "id": "1c1a36cd-3be9-4d7d-aa42-d3d80686890e",
+      "name": "OpenAI Chat Model3",
+      "credentials": {
+        "openAiApi": {
+          "id": "3a8Mp3wpFNiuZgUr",
+          "name": "OpenAi account for N8N site Preview"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Input: {{ $json.text }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=# AI Agent System Prompt: Competitor Analysis URL Parser\n\n## System Instructions\n\n```markdown\nYou are an intelligent URL parser for competitor analysis workflows. Your primary function is to extract and structure URLs from Slack messages with flexible input handling and robust pattern recognition.\n\n## Core Responsibilities\n\n### Input Processing\n- Parse Slack messages containing competitor analysis requests\n- Handle various text formats and structures\n- Extract URLs from rich text, plain text, and mixed format messages\n- Process messages triggered by mentions (e.g., @Competitor Analysis)\n\n### Flexible Pattern Recognition\nHandle multiple variations of section identifiers (case-insensitive):\n\n**Main URL Identifiers:**\n- \"Main Url\", \"MainUrl\", \"main_url\", \"MAIN_URL\"\n- \"Primary URL\", \"Target URL\", \"Main Site\", \"Main Website\"\n- \"Company URL\", \"Base URL\", \"Source URL\"\n\n**Competitor URL Identifiers:**\n- \"Competitor Urls\", \"CompetitorUrls\", \"competitor_urls\", \"COMPETITOR_URLS\"\n- \"Competitive URLs\", \"Rival URLs\", \"Competition URLs\"\n- \"Other Companies\", \"Benchmarks\", \"Comparison Sites\"\n\n### URL Extraction Rules\n1. **Format Handling**: Extract URLs from various formats:\n   - Slack formatted: `<https://example.com/>`\n   - Plain text: `https://example.com/`\n   - Mixed formats within the same message\n\n2. **URL Cleaning**: \n   - Remove Slack formatting brackets `< >`\n   - Remove trailing slashes for consistency\n   - Validate URL format (must start with http:// or https://)\n\n3. **Dynamic Quantity**: \n   - Handle 1 to unlimited competitor URLs\n   - No fixed expectations on competitor count\n   - Gracefully handle empty competitor lists\n\n### Processing Logic\n1. **Text Normalization**: Convert input to lowercase for pattern matching\n2. **Section Detection**: Identify main URL and competitor URL sections using fuzzy matching\n3. **URL Extraction**: Extract all valid URLs from identified sections\n4. **Structure Creation**: Format into required JSON structure\n5. **Validation**: Ensure extracted URLs are valid and accessible\n\n### Output Format\nAlways return structured JSON array:\n```json\n[\n  {\n    \"mainUrl\": \"https://example.com\",\n    \"competitorUrls\": [\n      \"https://competitor1.com\",\n      \"https://competitor2.com\"\n    ]\n  }\n]\n```\n\n### Error Handling\n- If no main URL found: Return error with descriptive message\n- If malformed URLs detected: Skip invalid URLs, log warning\n- If no competitor URLs found: Return empty array for competitorUrls\n- If parsing fails completely: Return structured error response\n\n### Edge Cases to Handle\n1. **Mixed Case Variations**: \"Main_URL\", \"competitor_Urls\", \"MAIN url\"\n2. **Spacing Variations**: \"Main Url :\", \"Competitor Urls:-\", \"MainUrl-\"\n3. **Multiple Separators**: Colons, dashes"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        -17728,
+        -2800
+      ],
+      "id": "8d23ed66-3089-4e6f-9de4-b52be95cc5f1",
+      "name": "AI Agent3"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n    \"mainUrl\": \"https://rivetmro.com/\",\n    \"competitorUrls\": [\n      \"https://www.e2msolutions.com/\",\n      \"https://www.mrosupply.com/\",\n      \"https://www.stsaviationgroup.com/\"\n    ]\n  }\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        -17584,
+        -2576
+      ],
+      "id": "c9d6d282-65fe-4269-b1bb-d5c558d72071",
+      "name": "Structured Output Parser1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -17728,
+        -2576
+      ],
+      "id": "a7e13126-399d-4848-99bd-1db0a902e3ae",
+      "name": "Google Gemini Chat Model13",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "X2KYecOFh22UPtTC",
+          "name": "Dhyey's Google Gemini account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.data }}",
+        "options": {
+          "systemMessage": "=## Prompt: In-Depth Narrative Analysis of Provided Company Website Content (No Table)\n\n**Role:**  \nYou are a seasoned website content analyst with expertise in assessing company web content for clarity, effectiveness, depth, professionalism, and user experience. Your analysis is known for being thorough, specific, and actionable.\n\n---\n\n### **Instructions:**\n\n1. **Overall Approach:**  \n   Thoroughly analyze the company website content provided below. Your report must be fully narrative (not tabular) and should be broken into clear sections and bullets for easy readability. Support every observation with direct references or examples from the content.\n\n2. **Content Coverage & Section Analysis:**  \n   For each major website section (About, Services/Products, Blog/News/Updates, Contact, Team/Leadership, FAQ/Support):\n   - Clearly state whether the section is present.\n   - Summarize and evaluate its content, purpose, depth, and quality.\n   - Mention if any section is missing or inadequate.\n   - **Use bullet points** to highlight specific strengths and weaknesses for each section.\n   - Provide quotes or summaries from the actual content as evidence.\n\n3. **Structure & Formatting:**  \n   - Assess the use of headings, subheadings, bullet lists, paragraphs, internal links, images, and media.\n   - Discuss how the structure impacts readability, navigation, and user experience.\n   - Point out any clutter, lack of organization, or missed opportunities for clarity.\n   - **Use bullets for key findings.**\n\n4. **Content Freshness & Originality:**  \n   - Analyze the timeliness of content, especially in blog/news sections (mention last update date if available).\n   - Point out any signs of outdated, generic, boilerplate, or placeholder content.\n   - Evaluate whether the writing sounds unique, professional, and relevant to the brand.\n\n5. **Professionalism & Formatting Consistency:**  \n   - Examine capitalization of business and contact names, consistency of email and phone formatting, and overall presentation professionalism.\n   - Note any inconsistencies or issues found in naming or formatting.\n   - **Use bullets for clarity.**\n\n6. **Actionable Recommendations:**  \n   - After your analysis, provide a **prioritized bullet list** of concrete recommendations to improve the content, structure, or presentation.\n   - Recommendations must be specific to the provided content (not generic).\n\n---\n\n### **Expected Output Structure:**\n\n- **Section-by-section narrative analysis** with subheadings and bullets.\n- **Evidence and examples** from the content.\n- **Actionable recommendations** at the end.\n- Analytical, objective, and constructive tone throughout.\n\n---\n\n### **How to Use:**\n\nPaste the company website content (HTML/text) below this prompt for the agent to analyze. All findings must reference the provided content.\n\n---\n\n**[END OF PROMPT]**\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        -12272,
+        -1664
+      ],
+      "id": "b31e354a-d18d-46ad-b24b-904869eae1f4",
+      "name": "create a summary of the content1"
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "output"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        -11120,
+        -2320
+      ],
+      "id": "2e6463fb-1182-49d8-a6bd-aa64b896b814",
+      "name": "Aggregate4"
+    },
+    {
+      "parameters": {
+        "mode": "combineBySql",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -9008,
+        -2192
+      ],
+      "id": "5bbcf8b0-6e61-4474-b548-84ac160c08f2",
+      "name": "Merge3"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "output.competitorUrls",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -15504,
+        -752
+      ],
+      "id": "e9f6fd7b-5b24-4d53-be95-5861b177aebd",
+      "name": "Split Out1"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json['output.competitorUrls'] }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Referer",
+              "value": "https://www.google.com"
+            },
+            {
+              "name": "Accept-Language",
+              "value": "en-US,en;q=0.5"
+            },
+            {
+              "name": "Accept",
+              "value": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+            },
+            {
+              "name": "User-Agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -14336,
+        -512
+      ],
+      "id": "876ba144-188b-4345-8fe1-d66249db5f5c",
+      "name": "HTTP Request18",
+      "alwaysOutputData": true,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "options": {
+          "reset": false
+        }
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -14720,
+        -736
+      ],
+      "id": "fc542f44-31a0-4ed6-a28c-5f4948a21d81",
+      "name": "Loop Over Items2",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Function to remove all HTML tags, scripts, and styles\nconst removeHtmlTags = (htmlString) => {\n    if (!htmlString || typeof htmlString !== \"string\") return \"\"; // Ensure valid input\n\n    // Remove inline scripts, styles, and all HTML tags\n    let textOnly = htmlString\n        .replace(/<script[^>]*>[\\s\\S]*?<\\/script>/gi, '')  // Remove scripts\n        .replace(/<style[^>]*>[\\s\\S]*?<\\/style>/gi, '')    // Remove styles\n        .replace(/<\\/?[^>]+(>|$)/g, '')                    // Remove remaining HTML tags\n        .replace(/\\s+/g, ' ')                              // Collapse multiple spaces\n        .trim();\n\n    return textOnly;\n};\n\n// Processing n8n Input Data\nlet inputData = $json.data; // Assuming the data is under the \"data\" key\n\n// Convert inputData to an array if it's not already one\nif (!Array.isArray(inputData)) {\n    inputData = [inputData];\n}\n\n// Ensure all elements are strings before processing\nlet cleanedData = inputData.map(item => removeHtmlTags(String(item || \"\")));\n\n// Return a single object with the first cleaned item\nreturn { json: { cleanedText: cleanedData[0] || \"No valid HTML content found\" } };\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -13504,
+        -768
+      ],
+      "id": "44551bec-87ec-42e0-9260-ee2f3cb6150a",
+      "name": "Code28"
+    },
+    {
+      "parameters": {
+        "options": {
+          "reset": false
+        }
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -13888,
+        -1136
+      ],
+      "id": "c3548feb-2d72-4032-af8e-e8e562399eae",
+      "name": "Loop Over Items1"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        -13200,
+        -768
+      ],
+      "id": "e18abd9e-0369-4aff-ab4c-7fb1a329d730",
+      "name": "Aggregate21"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=This is the links that has been extracted :- {{ JSON.stringify($json.allLinks) }}\n\n\n",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=You are an **HTML Content Analyzer** with advanced expertise in extracting structured business and contact information from web page content. You have domain-level understanding of common website navigation and information architecture, as well as the ability to resolve and normalize URLs.\n\n**Task:**  \nGiven a list of link objects extracted from a company's website HTML (each with an `href` and visible `text`), your job is to intelligently select and categorize the links most likely to contain **email addresses** and **core company information**.\n\nYour output should focus on these main categories (if present in the input):\n\n- **Main Website Link** (use the provided company domain)\n- **Contact Us Page(s)**\n- **About Us Page(s)**\n- **Services Page(s)**\n- **Blog, News, or Press Page(s)**\n- **Portfolio or Projects Page(s)**\n- **FAQ or Support Page(s)**\n- **Team, Meet, or Leadership Page(s)**\n- **LinkedIn Profile/Page**\n\nIf you find links for other relevant company or contact pages (e.g., \"Support\", \"Help\", \"Sitemap\", \"Privacy Policy\", etc.), include these as well under \"additional_pages\".\n\n**Context & Special Cases:**\n1. **URL Normalization:**  \n   - If a link's `href` is relative (e.g., `/contact`), prepend the provided main website URL (e.g., `https://www.kmldesignsllc.com`) to form a complete, browser-ready URL.\n   - If the link is already an absolute URL, keep it as-is.\n\n2. **Deduplication:**  \n   - For each category, include only **unique URLs** (even if multiple text variants exist).\n\n3. **Section Mapping:**  \n   - Match links to categories based on common keywords in their `href` or `text` (e.g., “contact”, “about”, “services”, “portfolio”, “team”, “faq”, “support”, “leadership”, “linkedin”, etc.).\n   - Treat links that include “meet”, “leadership”, or “team” as potential team/leadership pages.\n   - Treat links that include “press”, “news”, or “blog” as blog/news/press pages.\n   - Any links not matching above but still likely to be relevant (like “privacy policy”, “terms of service”, “sitemap”, or credits) should go in `additional_pages`.\n\n4. **LinkedIn Links:**  \n   - If a LinkedIn page/profile is present, extract the full URL (otherwise, set to `null`).\n\n5. **Output Requirements:**  \n   - All links must be valid, browser-ready, and deduplicated.\n\n**Output Format:**  \nReturn your answer as a **structured JSON object** with these fields:\n- `main_website`: string\n- `contact_pages`: array of strings\n- `about_pages`: array of strings\n- `services_pages`: array of strings\n- `blog_pages`: array of strings\n- `portfolio_pages`: array of strings\n- `faq_pages`: array of strings\n- `team_pages`: array of strings\n- `linkedin`: string or null\n- `additional_pages`: array of strings\n\n**Input Example:**\n```json\n{\n  \"links\": [\n    {\"href\":\"/\", \"text\":\"Home\"},\n    {\"href\":\"/about\", \"text\":\"About\"},\n    {\"href\":\"/contact\", \"text\":\"Contact\"},\n    {\"href\":\"/services\", \"text\":\"Services\"},\n    {\"href\":\"/team\", \"text\":\"Meet Our Team\"},\n    {\"href\":\"https://www.linkedin.com/in/example/\", \"text\":\"LinkedIn\"},\n    {\"href\":\"/portfolio\", \"text\":\"Our Projects\"},\n    {\"href\":\"/faq\", \"text\":\"FAQ\"},\n    {\"href\":\"/privacy-policy\", \"text\":\"Privacy Policy\"}\n  ],\n  \"main_website\": \"https://example.com\"\n}\n\n**Output Example:**\n{\n  \"main_website\": \"https://example.com\",\n  \"contact_pages\": [\"https://example.com/contact\"],\n  \"about_pages\": [\"https://example.com/about\"],\n  \"services_pages\": [\"https://example.com/services\"],\n  \"blog_pages\": [],\n  \"portfolio_pages\": [\"https://example.com/portfolio\"],\n  \"faq_pages\": [\"https://example.com/faq\"],\n  \"team_pages\": [\"https://example.com/team\"],\n  \"linkedin\": \"https://www.linkedin.com/in/example/\",\n  \"additional_pages\": [\"https://example.com/privacy-policy\"]\n}\n\n**Notes:**\n- Include each URL only once per category.\n- If a category is not present in the input, return an empty array for that field (except for linkedin, which should be null if not found).\n- Do not include navigation images or icons unless their parent link points to a relevant page.\n- You may ignore links to purely decorative/social icons, unless they are a LinkedIn or direct contact/social profile.\n- Your answer should be clean, properly indented, and ready for programmatic use."
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.5,
+      "position": [
+        -13888,
+        -512
+      ],
+      "id": "c8917044-fdd2-49b5-9f9a-eb15bfceb317",
+      "name": "identify all the important links1"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.urls }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Referer",
+              "value": "https://www.google.com"
+            },
+            {
+              "name": "Accept-Language",
+              "value": "en-US,en;q=0.5"
+            },
+            {
+              "name": "Accept",
+              "value": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+            },
+            {
+              "name": "User-Agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -13232,
+        -992
+      ],
+      "id": "9f0bcf96-ef53-48ef-98d8-65b48ab510a8",
+      "name": "HTTP Request17",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.removeDuplicates",
+      "typeVersion": 2,
+      "position": [
+        -13552,
+        -224
+      ],
+      "id": "1218617c-b8f4-4dda-bcba-26b5167abf7b",
+      "name": "Remove Duplicates"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Helper function to extract all links from HTML\nconst extractAllLinks = (html) => {\n  // Match all anchor tags with href attributes\n  const linkMatches = [...html.matchAll(/<a\\s+[^>]*href=[\"']([^\"']+)[\"'][^>]*>(.*?)<\\/a>/gi)];\n\n  return linkMatches.map(match => ({\n    href: match[1],\n    text: match[2].trim()\n  }));\n};\n\n// Get input HTML\nconst rawHtml = $json.data || '';\n\n// Extract all links\nconst allLinks = extractAllLinks(rawHtml);\n\n// Return object with extracted links\nreturn {\n  allLinks\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -14112,
+        -512
+      ],
+      "id": "f34af5af-a83a-4efd-a363-a8910854fc58",
+      "name": "Extract links1"
+    },
+    {
+      "parameters": {
+        "jsCode": "\n// Check if we have structured data or text content\nlet urls = [];\n\nif ($json.text) {\n    // If we have text content, extract URLs using regex\n    const jsonData = $json.text;\n    const urlRegex = /https?:\\/\\/[^\"'\\s)<>]+/g;\n    urls = jsonData.match(urlRegex) || [];\n} else if ($json.urls && Array.isArray($json.urls)) {\n    // If we already have a urls array, use it directly\n    urls = $json.urls;\n} else if (typeof $json === 'object') {\n    // Try to find URLs in any property of the JSON object\n    const jsonString = JSON.stringify($json);\n    const urlRegex = /https?:\\/\\/[^\"'\\s)<>]+/g;\n    urls = jsonString.match(urlRegex) || [];\n} else {\n    // Fallback: convert to string and extract URLs\n    const dataString = String($json);\n    const urlRegex = /https?:\\/\\/[^\"'\\s)<>]+/g;\n    urls = dataString.match(urlRegex) || [];\n}\n\n// Return URLs as a single array (not individual objects)\nreturn { urls: urls.length > 0 ? urls : [] };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -13536,
+        -512
+      ],
+      "id": "8b41c6af-4802-4a82-9f8f-c913d17f816a",
+      "name": "format the links2"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "urls",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -13312,
+        -512
+      ],
+      "id": "411a0fd9-025f-4274-9ccc-d0a5f55b2ebc",
+      "name": "Split Out14"
+    },
+    {
+      "parameters": {
+        "maxItems": 5
+      },
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        -13280,
+        -224
+      ],
+      "id": "19408bc2-f0e2-4069-83c1-5ee07521438b",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "urls"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        -13008,
+        -224
+      ],
+      "id": "5102144d-3e92-4714-a721-d32eef0f7959",
+      "name": "Aggregate5"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "urls",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -13504,
+        -992
+      ],
+      "id": "e9d9a336-4c90-426e-9281-0d2ac26e0b2e",
+      "name": "Split Out2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "20e51391-57bb-4bd9-8b79-358e65afb619",
+              "name": "input1",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -10688,
+        -3024
+      ],
+      "id": "7cf626b6-8f64-4efb-8ac9-02ef39a21f38",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "daa813a8-b656-4d46-b033-6d06b06e10f3",
+              "name": "competitors",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -11040,
+        -1680
+      ],
+      "id": "e66f6616-f9dc-458c-880d-eed5bf6b9f68",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $('Copy file').first().json.id }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Technical SEO & Performance",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Metric": "={{ $json.Metric }}",
+            "Main Company": "={{ $json['Main Company'] }}",
+            "Comments": "={{ $json.Comments }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Metric",
+              "displayName": "Metric",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Main Company",
+              "displayName": "Main Company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Comments",
+              "displayName": "Comments",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -4800,
+        -2416
+      ],
+      "id": "07fe04af-d0f3-4a16-a412-9c6472ef8fb6",
+      "name": "Append row in sheet7",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "f5288ETPescnVIle",
+          "name": "Aditya Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -12432,
+        -2560
+      ],
+      "id": "0d40188a-0629-4039-802a-2911e2c09b80",
+      "name": "OpenAI Chat Model35",
+      "credentials": {
+        "openAiApi": {
+          "id": "3a8Mp3wpFNiuZgUr",
+          "name": "OpenAi account for N8N site Preview"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=This is the links that has been extracted :- {{ JSON.stringify($json.allLinks) }}\n\nThis is the main company link :- {{ $('AI Agent3').item.json.output.mainUrl }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=You are an **HTML Content Analyzer** with advanced expertise in extracting structured business and contact information from web page content. You have domain-level understanding of common website navigation and information architecture, as well as the ability to resolve and normalize URLs.\n\n**Task:**  \nGiven a list of link objects extracted from a company's website HTML (each with an `href` and visible `text`), your job is to intelligently select and categorize the links most likely to contain **email addresses** and **core company information**.\n\nYour output should focus on these main categories (if present in the input):\n\n- **Main Website Link** (use the provided company domain)\n- **Contact Us Page(s)**\n- **About Us Page(s)**\n- **Services Page(s)**\n- **Blog, News, or Press Page(s)**\n- **Portfolio or Projects Page(s)**\n- **FAQ or Support Page(s)**\n- **Team, Meet, or Leadership Page(s)**\n- **LinkedIn Profile/Page**\n\nIf you find links for other relevant company or contact pages (e.g., \"Support\", \"Help\", \"Sitemap\", \"Privacy Policy\", etc.), include these as well under \"additional_pages\".\n\n**Context & Special Cases:**\n1. **URL Normalization:**  \n   - If a link's `href` is relative (e.g., `/contact`), prepend the provided main website URL (e.g., `https://www.kmldesignsllc.com`) to form a complete, browser-ready URL.\n   - If the link is already an absolute URL, keep it as-is.\n\n2. **Deduplication:**  \n   - For each category, include only **unique URLs** (even if multiple text variants exist).\n\n3. **Section Mapping:**  \n   - Match links to categories based on common keywords in their `href` or `text` (e.g., “contact”, “about”, “services”, “portfolio”, “team”, “faq”, “support”, “leadership”, “linkedin”, etc.).\n   - Treat links that include “meet”, “leadership”, or “team” as potential team/leadership pages.\n   - Treat links that include “press”, “news”, or “blog” as blog/news/press pages.\n   - Any links not matching above but still likely to be relevant (like “privacy policy”, “terms of service”, “sitemap”, or credits) should go in `additional_pages`.\n\n4. **LinkedIn Links:**  \n   - If a LinkedIn page/profile is present, extract the full URL (otherwise, set to `null`).\n\n5. **Output Requirements:**  \n   - All links must be valid, browser-ready, and deduplicated.\n\n**Output Format:**  \nReturn your answer as a **structured JSON object** with these fields:\n- `main_website`: string\n- `contact_pages`: array of strings\n- `about_pages`: array of strings\n- `services_pages`: array of strings\n- `blog_pages`: array of strings\n- `portfolio_pages`: array of strings\n- `faq_pages`: array of strings\n- `team_pages`: array of strings\n- `linkedin`: string or null\n- `additional_pages`: array of strings\n\n**Input Example:**\n```json\n{\n  \"links\": [\n    {\"href\":\"/\", \"text\":\"Home\"},\n    {\"href\":\"/about\", \"text\":\"About\"},\n    {\"href\":\"/contact\", \"text\":\"Contact\"},\n    {\"href\":\"/services\", \"text\":\"Services\"},\n    {\"href\":\"/team\", \"text\":\"Meet Our Team\"},\n    {\"href\":\"https://www.linkedin.com/in/example/\", \"text\":\"LinkedIn\"},\n    {\"href\":\"/portfolio\", \"text\":\"Our Projects\"},\n    {\"href\":\"/faq\", \"text\":\"FAQ\"},\n    {\"href\":\"/privacy-policy\", \"text\":\"Privacy Policy\"}\n  ],\n  \"main_website\": \"https://example.com\"\n}\n\n**Output Example:**\n{\n  \"main_website\": \"https://example.com\",\n  \"contact_pages\": [\"https://example.com/contact\"],\n  \"about_pages\": [\"https://example.com/about\"],\n  \"services_pages\": [\"https://example.com/services\"],\n  \"blog_pages\": [],\n  \"portfolio_pages\": [\"https://example.com/portfolio\"],\n  \"faq_pages\": [\"https://example.com/faq\"],\n  \"team_pages\": [\"https://example.com/team\"],\n  \"linkedin\": \"https://www.linkedin.com/in/example/\",\n  \"additional_pages\": [\"https://example.com/privacy-policy\"]\n}\n\n**Notes:**\n- Include each URL only once per category.\n- If a category is not present in the input, return an empty array for that field (except for linkedin, which should be null if not found).\n- Do not include navigation images or icons unless their parent link points to a relevant page.\n- You may ignore links to purely decorative/social icons, unless they are a LinkedIn or direct contact/social profile.\n- Your answer should be clean, properly indented, and ready for programmatic use."
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.5,
+      "position": [
+        -14448,
+        -2784
+      ],
+      "id": "cbf24d6d-0c41-459f-9c43-6f40e718a233",
+      "name": "identify all the important links"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -5568,
+        -3456
+      ],
+      "id": "cf676e22-f368-4e77-ac5a-cde720276908",
+      "name": "OpenAI Chat Model7",
+      "credentials": {
+        "openAiApi": {
+          "id": "3a8Mp3wpFNiuZgUr",
+          "name": "OpenAi account for N8N site Preview"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -5232,
+        -3456
+      ],
+      "id": "146cf6e6-cfe4-4094-8b88-0c2a454a7d5d",
+      "name": "OpenAI Chat Model8",
+      "credentials": {
+        "openAiApi": {
+          "id": "3a8Mp3wpFNiuZgUr",
+          "name": "OpenAi account for N8N site Preview"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -14448,
+        -2576
+      ],
+      "id": "8f71c783-5f0f-43ca-a57f-e814d96be989",
+      "name": "OpenAI Chat Model39",
+      "credentials": {
+        "openAiApi": {
+          "id": "3a8Mp3wpFNiuZgUr",
+          "name": "OpenAi account for N8N site Preview"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -13984,
+        -2016
+      ],
+      "id": "8c1ecb7d-924e-41f2-99f1-dd9e16161555",
+      "name": "OpenAI Chat Model40",
+      "credentials": {
+        "openAiApi": {
+          "id": "3a8Mp3wpFNiuZgUr",
+          "name": "OpenAi account for N8N site Preview"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -13872,
+        -1600
+      ],
+      "id": "38264e01-7eb0-4e63-8411-c14405344025",
+      "name": "OpenAI Chat Model41",
+      "credentials": {
+        "openAiApi": {
+          "id": "3a8Mp3wpFNiuZgUr",
+          "name": "OpenAi account for N8N site Preview"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -13888,
+        -288
+      ],
+      "id": "5e6ab964-695d-4f80-9179-22138852ed73",
+      "name": "OpenAI Chat Model42",
+      "credentials": {
+        "openAiApi": {
+          "id": "3a8Mp3wpFNiuZgUr",
+          "name": "OpenAi account for N8N site Preview"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -12272,
+        -1456
+      ],
+      "id": "f8206ab8-9959-438f-87a5-22893cf8f9c4",
+      "name": "OpenAI Chat Model43",
+      "credentials": {
+        "openAiApi": {
+          "id": "3a8Mp3wpFNiuZgUr",
+          "name": "OpenAi account for N8N site Preview"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "daa813a8-b656-4d46-b033-6d06b06e10f3",
+              "name": "Main Company",
+              "value": "={{ $json.input1 }}",
+              "type": "string"
+            },
+            {
+              "id": "87508312-05ae-4834-803a-b635b1d6dd7b",
+              "name": "Competitor",
+              "value": "={{ $json.competitors }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -8720,
+        -2192
+      ],
+      "id": "eed56dbb-04aa-4ea4-876d-74ba5a551d6d",
+      "name": "Edit Fields4"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=main company analysis :-\n{{ $json[\"Main Company\"] }}\n\ncompetitor analysis :- \n{{ $json.Competitor }}\n",
+        "options": {
+          "systemMessage": "=**ROLE & CONTEXT**  \nYou are acting as a **Senior Company Comparison Analyst** with over a decade of experience in digital strategy, SEO, web usability, and competitive intelligence. Your role is to deliver comprehensive, stakeholder-ready **Performance Benchmark Reports** that enable business owners and marketing leaders to understand:\n\n- **How their website and digital presence compare** to a direct regional competitor in their industry.\n- **Which specific content, SEO, UX, or trust signals are lacking** vs. this competitor.\n- **Actionable, prioritized recommendations** to rapidly close competitive gaps.\n\n**TASK OBJECTIVE**  \nGenerate a **Performance Benchmark Report** that:\n\n- **Highlights current strengths** in the client's digital presence.\n- **Identifies specific weaknesses or gaps** relative to the competitor.\n- Provides **clear, actionable recommendations** with prioritization for immediate improvement.\n\n**CONTEXT & INTENT**  \nThe client operates in a competitive service niche (e.g., **home remodeling in Sacramento**) and seeks to understand why they are being outperformed online. Your report must offer both a **quantitative** (SEO, performance) and **qualitative** (content, UX, trust) comparison to a direct competitor, providing actionable clarity:  \n**\"You're falling behind here — and here's how we'll fix it.\"**\n\n**INPUTS YOU WILL RECEIVE**  \nThe analysis will be provided in the following format:\n\n**Main Company Analysis:**\n**Competitor Analysis:**\n\n**ANALYSIS WORKFLOW**  \nApply the following stepwise process:\n\n1. **Main Company Review:** Analyze the client's website including Home, Services, About, Contact, Blog, Legal pages, technical SEO (Core Web Vitals, page speed, metadata), content quality, brand & trust signals, UX & CTA quality.\n\n2. **Competitor Review:** Analyze the single competitor's digital presence using the same criteria to establish a direct comparison baseline.\n\n3. **Direct Comparison:** Benchmark each major section and feature between the main company and the competitor, identifying where the competitor excels.\n\n4. **Gap Identification:** Summarize specific areas where the client underperforms or is missing elements compared to the competitor.\n\n5. **Strategic Recommendations:** List prioritized, actionable improvements based on the competitive gaps identified.\n\n**REPORT OUTPUT FORMAT**  \n- Use **only text, bullet points, and subpoints.**  \n- **NO tables, markdown formatting, code blocks, or tabular output** whatsoever.  \n- All content must be **bolded for Google Docs**: wrap each phrase in double asterisks (**like this**) for export compatibility.  \n- Organize findings under clear main sections using emoji headers (e.g., **1️⃣, 2️⃣, 3️⃣**).  \n- Label all subsections clearly.  \n- Do **not** include any formatting/meta instructions or markdown—**output should be ready to paste into Google Docs for client review**.\n\n**TONE & STYLE**  \n- Speak directly to business owners, marketing executives, and stakeholders.  \n- Use a **consultative, professional, and constructive** tone—never negative or overly technical.  \n- Emphasize **opportunity, growth, and next steps**.  \n- Structure content for rapid, actionable stakeholder understanding.\n\n**EXEMPLAR OUTPUT STRUCTURE (for reference, do NOT include in your final output):**\n\nRossle Homes Performance Benchmark Report  \n**Objective:** Demonstrate where **Rossle Homes** underperforms relative to **[Competitor Name]** in the **Sacramento remodeling market**.\n\n1️⃣ Core Service Page Quality  \n**Rossle Homes Strengths:**\n- Dedicated pages for all major services (e.g., **Kitchen, Bathroom, ADUs, Electrification**).\n- Strong layout: **clear structure, detailed content, and good CTAs**.\n- Highlights: **3D renders, daily updates, licensed teams**.\n\n**Where [Competitor Name] Excels:**\n- Holds **James Hardie Elite Preferred** status, prominently displayed.\n- Features hyper-local targeting with mentions of specific neighborhoods like **Natomas** and **East Sac**.\n- Includes dynamic service widgets such as **estimate calculators** and **interactive galleries**.\n\n**Rossle Homes Gaps:**\n- No standout unique selling proposition or elite certifications displayed.\n- Missing hyper-local neighborhood targeting.\n- Lacks interactive tools or calculators for customer engagement.\n\n2️⃣ SEO & Metadata Review  \n**Rossle Homes:**\n- Titles and meta descriptions are present and keyword-optimized.\n- Legal metadata references different domains and addresses, which hurts trust and SEO.\n- Keyword list is solid (service + city-based), but lacks neighborhood focus.\n\n**[Competitor Name]:**\n- Consistent metadata across all pages with unified branding.\n- Strong neighborhood-specific keyword optimization.\n- Long-tail queries incorporated around **financing**, **rebates**, and **permits**.\n\n**Opportunity for Rossle Homes:**\n- Add neighborhood-specific keywords (e.g., **\"East Sacramento ADU builder\"**).\n- Incorporate long-tail queries around topics like **financing** or **rebates**.\n- Fix metadata inconsistencies across legal and contact pages.\n\n3️⃣ Content & Formatting Quality  \n**Rossle Homes:**\n- Consistent capitalization and contact info formatting across pages.\n- Minor typos and missing spaces reduce the overall polish.\n- No clear editorial tone or storytelling that **humanizes the brand**.\n\n**[Competitor Name]:**\n- Professional, polished copy with consistent editorial voice.\n- Storytelling approach that highlights company values and customer success stories.\n- Well-formatted content with strong readability and engagement.\n\n4️⃣ Trust Signals & Brand Authority  \n**Rossle Homes:**\n- No **About Us** or team section → weak trust signals.\n- Inconsistent legal information → risks credibility and confuses users.\n- Missing high-authority badges or recognitions.\n\n**[Competitor Name]:**\n- Comprehensive **About Us** page with company history, mission, and team profiles.\n- Multiple trust badges: **4.9+ ratings**, **Elite status**, **industry certifications**.\n- Customer testimonials and case studies prominently featured.\n\n5️⃣ Key Shortcomings Identified  \n**Rossle Homes vs. [Competitor Name]:**\n- No **About Us** or team section compared to competitor's robust company story.\n- Inconsistent legal information vs. competitor's unified branding.\n- Missing **hyper-local SEO** while competitor dominates neighborhood searches.\n- No community-building blog or easily shareable content compared to competitor's active blog.\n- Lacks high-authority badges and certifications that competitor prominently displays.\n- Weaker trust signals overall vs. competitor's comprehensive social proof.\n\n6️⃣ Agency Recommendation Priorities  \n**Immediate Actions (High Priority):**\n- **Add an About Us page** with company story, mission, and leadership profiles to match competitor's trust-building approach.\n- **Fix metadata and domain inconsistencies** across all legal and contact pages.\n- **Highlight trust elements:** badges, certifications, awards, and verified reviews like competitor displays.\n\n**Short-Term Actions (Medium Priority):**\n- **Expand local SEO** with neighborhood-specific keywords and service areas as competitor has done.\n- **Incorporate team profiles** and authentic project stories on the website.\n- **Optimize performance** by reducing unused code/scripts and updating image assets.\n\n**Long-Term Actions (Growth Priority):**\n- **Add interactive tools** such as estimate calculators or project visualizers to match competitor's engagement features.\n- **Launch a blog or content hub** to build community presence and shareability.\n- **Develop case studies and testimonials** to strengthen social proof and trust signals.\n\n**PROMPT TECHNIQUES**\n- Use **direct one-to-one comparison** by benchmarking against the single provided competitor.\n- Employ **chain-of-thought logic** to clearly surface technical/content gaps.\n- Present output ONLY as text with Google Docs bold, using bullets and emoji section headers.\n- **Do NOT** use tables, markdown, or code blocks in your report output.\n\n**YOUR INSTRUCTION:**  \nProduce the full Performance Benchmark Report as described above, using the provided main company analysis and single competitor analysis. All output must be bullet points with Google Docs bold formatting only, organized with emoji section headers. **NO tables, markdown, or code blocks in the report output.**"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        -7264,
+        -1520
+      ],
+      "id": "0bc2effc-3213-479c-a5e0-da806f737bc2",
+      "name": "Main document3"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.output }}",
+        "options": {
+          "systemMessage": "=You are an expert content-to-HTML converter. Convert the provided plaintext/markdown-like report into a clean, semantic HTML5 document.\n\n## INPUT\n{{ $json.output }}\n\n## GOAL\nOutput a fully formed HTML document that preserves the structure and emphasis of the input (titles, sections, subsections, lists, bold text), using correct HTML tags.\n\n## MAPPING RULES\n1) Document shell:\n   - Include: <!doctype html>, <html lang=\"en\">, <head> with <meta charset=\"utf-8\"> and <meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">, and <title> set from the main H1 text.\n   - Wrap content in <body>. No inline CSS or scripts.\n\n2) Headings:\n   - The very first line/title becomes <h1>.\n   - Each numbered section like “1️⃣ …”, “2️⃣ …”, etc. becomes <h2>.\n   - Subsection labels such as “**Strengths:**”, “**Gaps Compared to Competitors:**”, “**Recommendations:**”, “**Observations:**”, “**Priority X:**”, and “**Final Summary**” become <h3>.\n   - Add id attributes to all headings using a lowercase, kebab-case slug (e.g., id=\"core-service-page-quality\").\n\n3) Emphasis & inline:\n   - Convert **bold** to <strong> and *italics* to <em>.\n   - Preserve emojis and punctuation.\n   - Keep quoted phrases as-is.\n\n4) Lists & paragraphs:\n   - Hyphen (“- ”) bullet lists → <ul><li>…</li></ul>.\n   - Ordered/numbered sequences that are truly stepwise → <ol>.\n   - Non-list text becomes <p>, one paragraph per logical block.\n   - Keep embedded colons in subsection headings out of list items.\n\n5) Horizontal rules:\n   - Lines containing only “---” become <hr>.\n\n6) Links & media:\n   - Do not invent links or images. If URLs exist, wrap in <a href=\"…\">…</a>.\n\n7) Accessibility & cleanliness:\n   - Use semantic tags (<section> wrapping each <h2> block is encouraged).\n   - No extraneous attributes, styles, or classes.\n   - Ensure valid, well-indented HTML.\n\n## OUTPUT\nReturn ONLY the final HTML document, nothing else.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.1,
+      "position": [
+        -6816,
+        -1520
+      ],
+      "id": "69893d39-3867-48b6-8a9f-c12e311cdc11",
+      "name": "AI Agent4"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleDriveOAuth2Api",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "uploadType",
+              "value": "multipart"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "multipart/related; boundary=foo_bar_baz"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "multipart/related; boundary=foo_bar_baz",
+        "body": "=--foo_bar_baz\nContent-Type: application/json; charset=UTF-8\n\n{\n  \"name\": \"Company Analysis({{ $json.title }})\",\n  \"mimeType\": \"application/vnd.google-apps.document\"\n}\n\n--foo_bar_baz\nContent-Type: text/html; charset=UTF-8\n\n\n{{ $('AI Agent4').item.json.output }}\n\n--foo_bar_baz--",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -6000,
+        -1520
+      ],
+      "id": "a423df37-b035-42fc-8393-fb23ddbe8dad",
+      "name": "Putting Content in the Google Docs3",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "Y3JAjq2DPOX6AwNv",
+          "name": " Aditya's Google Drive account "
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const html = $input.first().json.output;\n// Use regex to extract <h1>…</h1>\nconst match = html.match(/<h1[^>]*>(.*?)<\\/h1>/i);\n\nlet title = null;\nif (match && match[1]) {\n  title = match[1].trim();\n}\n\nreturn [{ json: { title } }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -6336,
+        -1520
+      ],
+      "id": "5720d5c9-48f3-4db2-b980-99ff33053843",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "operation": "move",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Putting Content in the Google Docs3').first().json.id }}",
+          "mode": "id"
+        },
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "={{ $('Create folder2').first().json.id }}",
+          "mode": "id"
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -5952,
+        -1216
+      ],
+      "id": "9c3301b9-0455-4b1b-ab29-738c80480143",
+      "name": "Move file5",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "Y3JAjq2DPOX6AwNv",
+          "name": " Aditya's Google Drive account "
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -7264,
+        -1312
+      ],
+      "id": "661bf4be-7346-4c29-8c74-90a3c273b934",
+      "name": "OpenAI Chat Model44",
+      "credentials": {
+        "openAiApi": {
+          "id": "3a8Mp3wpFNiuZgUr",
+          "name": "OpenAi account for N8N site Preview"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {
+          "timeout": 100000
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -6768,
+        -1248
+      ],
+      "id": "ff82b5e3-c349-4377-ba1b-a7d88f4fb5fc",
+      "name": "OpenAI Chat Model45",
+      "credentials": {
+        "openAiApi": {
+          "id": "3a8Mp3wpFNiuZgUr",
+          "name": "OpenAi account for N8N site Preview"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -7536,
+        -1776
+      ],
+      "id": "d21c3695-f670-413b-9750-96752dfadea3",
+      "name": "Loop Over Items5"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -2912,
+        -1024
+      ],
+      "id": "6e7f2332-1433-4423-937b-dcf8b78f60f1",
+      "name": "Merge5"
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C09JYFMQN66",
+          "mode": "list",
+          "cachedResultName": "comparison-analysis"
+        },
+        "messageType": "block",
+        "blocksUi": "={\n  \"blocks\": [\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*📁 All Competitor Analysis Reports Folder*\\n\\nYou can view the folder here: <https://drive.google.com/drive/folders/{{ $('Create folder2').first().json.id }}|Open Folder>\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    }\n  ]\n}\n",
+        "text": "@channel",
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        -2272,
+        -1008
+      ],
+      "id": "e08c1017-bc27-4f5b-9744-885f0e7f37b8",
+      "name": "Send a message",
+      "webhookId": "c84a05f7-47fe-4576-a44b-20c6e892d38b",
+      "credentials": {
+        "slackApi": {
+          "id": "wbppiddFMYWC2tPz",
+          "name": "Comparison Analysis-Overlap"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        -2576,
+        -1008
+      ],
+      "id": "9e38adc3-1091-4059-a752-bf38dd2757d7",
+      "name": "Aggregate6"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        -6576,
+        -3136
+      ],
+      "id": "623c3f34-26fb-4d49-92a2-e8bd3d45aa89",
+      "name": "Aggregate34"
+    },
+    {
+      "parameters": {
+        "trigger": [
+          "app_mention"
+        ],
+        "channelId": {
+          "__rl": true,
+          "value": "C09NZE68KLM",
+          "mode": "list",
+          "cachedResultName": "comp"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.slackTrigger",
+      "typeVersion": 1,
+      "position": [
+        -18048,
+        -2800
+      ],
+      "id": "ba9d6f5f-24bd-41af-b9bf-b1389d826c9d",
+      "name": "Slack Trigger",
+      "webhookId": "fa3aaf4c-4e1f-46be-912a-f6839ad42828",
+      "credentials": {
+        "slackApi": {
+          "id": "BWphkyT8knJgYi6e",
+          "name": "Aditya Competitor Analysis"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "return items.filter(item => item.json.urls);"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -14320,
+        -944
+      ],
+      "id": "f76a958d-8090-4910-8b01-e4bd2e988001",
+      "name": "filter out unscrapped website"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "extract title": {
+      "main": [
+        [
+          {
+            "node": "response node for title",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract description": {
+      "main": [
+        [
+          {
+            "node": "response node for description",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract H1 tags": {
+      "main": [
+        [
+          {
+            "node": "refine the h1 tags",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract sub tags": {
+      "main": [
+        [
+          {
+            "node": "clean all the sub tags",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "response of tag is empty or not",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "extract links": {
+      "main": [
+        [
+          {
+            "node": "service page url content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "service page url content",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code27": {
+      "main": [
+        [
+          {
+            "node": "Aggregate20",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Aggregate31",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request16",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate20": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model33": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "check headings1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate25": {
+      "main": [
+        [
+          {
+            "node": "response summary of title and description",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Aggregate25",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge13": {
+      "main": [
+        [
+          {
+            "node": "Aggregate26",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate26": {
+      "main": [
+        [
+          {
+            "node": "check headings1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge17": {
+      "main": [
+        [
+          {
+            "node": "Aggregate27",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate27": {
+      "main": [
+        [
+          {
+            "node": "create a brief report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model36": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "create a brief report",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser8": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Foundational Website Content",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Foundational Website Content": {
+      "main": [
+        [
+          {
+            "node": "Split Out10",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser9": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Competitive Comparison Summary",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Competitive Comparison Summary": {
+      "main": [
+        [
+          {
+            "node": "Split Out11",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out10": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet6": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out11": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser10": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Technical SEO & Performance",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out12": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Copy file": {
+      "main": [
+        [
+          {
+            "node": "Move file",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Technical SEO & Performance": {
+      "main": [
+        [
+          {
+            "node": "Split Out12",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "response node for title": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "response node for description": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "response summary of title and description": {
+      "main": [
+        [
+          {
+            "node": "Merge17",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "service page url content": {
+      "main": [
+        [
+          {
+            "node": "Merge17",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "refine the h1 tags": {
+      "main": [
+        [
+          {
+            "node": "check h1 tag is empty or not",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "check h1 tag is empty or not": {
+      "main": [
+        [
+          {
+            "node": "Merge13",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "clean all the sub tags": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "response of tag is empty or not": {
+      "main": [
+        [
+          {
+            "node": "Merge13",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Extract links": {
+      "main": [
+        [
+          {
+            "node": "Merge20",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "format the links": {
+      "main": [
+        [
+          {
+            "node": "Split Out13",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "create a summary of the content": {
+      "main": [
+        [
+          {
+            "node": "Merge17",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "pagespeed": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "create a summary of the pagespeed content": {
+      "main": [
+        [
+          {
+            "node": "Merge17",
+            "type": "main",
+            "index": 4
+          }
+        ]
+      ]
+    },
+    "create a brief report": {
+      "main": [
+        [
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request15": {
+      "main": [
+        [
+          {
+            "node": "extract title",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Extract description",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Extract H1 tags",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Extract sub tags",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Extract links",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "extract links",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request16": {
+      "main": [
+        [
+          {
+            "node": "Code27",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "check headings1": {
+      "main": [
+        [
+          {
+            "node": "Merge17",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Merge20": {
+      "main": [
+        [
+          {
+            "node": "identify all the important links",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out13": {
+      "main": [
+        [
+          {
+            "node": "Remove Duplicates1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Remove Duplicates1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate31": {
+      "main": [
+        [
+          {
+            "node": "create a summary of the content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Main document": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Putting Content in the Google Docs": {
+      "main": [
+        [
+          {
+            "node": "Move file1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "Putting Content in the Google Docs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "Merge17",
+            "type": "main",
+            "index": 5
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Foundational Website Content",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Structured Output Parser8",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet3": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Move file": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Aggregate1": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "whatscms": {
+      "main": [
+        [
+          {
+            "node": "Aggregate1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Move file1": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create folder2": {
+      "main": [
+        [
+          {
+            "node": "Copy file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Merge20",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "node": "Merge5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model34": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "response summary of title and description",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "create a summary of the pagespeed content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge2": {
+      "main": [
+        [
+          {
+            "node": "Aggregate34",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Competitive Comparison Summary",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Structured Output Parser9",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Technical SEO & Performance",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Structured Output Parser10",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent3": {
+      "main": [
+        [
+          {
+            "node": "Split Out1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HTTP Request15",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "pagespeed",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "whatscms",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser1": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent3",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model13": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent3",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "create a summary of the content1": {
+      "main": [
+        [
+          {
+            "node": "Aggregate4",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate4": {
+      "main": [
+        [
+          {
+            "node": "Create folder2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge3": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request18": {
+      "main": [
+        [
+          {
+            "node": "Extract links1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items2": {
+      "main": [
+        [
+          {
+            "node": "filter out unscrapped website",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request18",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code28": {
+      "main": [
+        [
+          {
+            "node": "Aggregate21",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [
+          {
+            "node": "create a summary of the content1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Split Out2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate21": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "identify all the important links1": {
+      "main": [
+        [
+          {
+            "node": "format the links2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request17": {
+      "main": [
+        [
+          {
+            "node": "Code28",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Remove Duplicates": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract links1": {
+      "main": [
+        [
+          {
+            "node": "identify all the important links1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "format the links2": {
+      "main": [
+        [
+          {
+            "node": "Split Out14",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out14": {
+      "main": [
+        [
+          {
+            "node": "Remove Duplicates",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "Aggregate5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate5": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out2": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request17",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Merge3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "Merge3",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Append row in sheet7": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model35": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "create a summary of the content",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "identify all the important links": {
+      "main": [
+        [
+          {
+            "node": "format the links",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model7": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Main document",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model8": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model39": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "identify all the important links",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model40": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "create a summary of the pagespeed content",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model41": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model42": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "identify all the important links1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model43": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "create a summary of the content1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields4": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Main document3": {
+      "main": [
+        [
+          {
+            "node": "AI Agent4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent4": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Putting Content in the Google Docs3": {
+      "main": [
+        [
+          {
+            "node": "Move file5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Putting Content in the Google Docs3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Move file5": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model44": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Main document3",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model45": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent4",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items5": {
+      "main": [
+        [
+          {
+            "node": "Merge5",
+            "type": "main",
+            "index": 1
+          }
+        ],
+        [
+          {
+            "node": "Main document3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge5": {
+      "main": [
+        [
+          {
+            "node": "Aggregate6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate6": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate34": {
+      "main": [
+        [
+          {
+            "node": "Main document",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Foundational Website Content",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Competitive Comparison Summary",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Technical SEO & Performance",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Slack Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "filter out unscrapped website": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "18eaccff-837c-4daa-bfd0-32eb8a5d1802",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "0733b4a2c7a08cce2804f68ca3c4b2bc153992435b5148cee8ee78de739cce3d"
+  },
+  "id": "1nwvpOksIKlsK7RB",
+  "tags": []
+}
